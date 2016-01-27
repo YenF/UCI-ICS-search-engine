@@ -40,6 +40,10 @@ public class myCrawler extends WebCrawler {
 			String html = htmlParseData.getHtml();
 
 			// Store the information by SQL goes here
+			/**
+			 * 这部分添加<存储入DB>的代码
+			 * 这里存储的是HTML的数据
+			 */
 
 		}
 	}
