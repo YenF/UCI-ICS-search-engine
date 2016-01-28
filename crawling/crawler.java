@@ -23,7 +23,7 @@ public class crawler {
      * http://code.google.com/p/crawler4j/source/browse/src/test/java/edu/uci/ics/crawler4j/examples/basic/BasicCrawlController.java
      */
 
-    private static final int maxDepth = 1;
+    private static final int maxDepth = -1;
 
     public static Collection<String> crawl(String seedURL) {
         return crawl(seedURL, new docStore("docStorage"));
@@ -52,14 +52,19 @@ public class crawler {
              */
             myConfig.setUserAgentString("UCI IR crawler 18601447 64688315");
             myConfig.setIncludeBinaryContentInCrawling(false);
+            
+            myCrawlerParams params = new myCrawlerParams();
+            params.setSeedUrl(seedURL);
+            params.setDocumentStorage(documentStorage);
 
             // Instantiate controller
-            PageFetcher pageFetcher = new PageFetcher(myConfig);
+            PageFetcher pageFetch = new PageFetcher(myConfig);
             RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-            RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-            CrawlController controller = new CrawlController(myConfig, pageFetcher, robotstxtServer);
+            RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetch);
+            CrawlController controller = new CrawlController(myConfig, pageFetch, robotstxtServer);
 
             controller.addSeed(seedURL);
+            controller.setCustomData(params);
 
             // Start crawling
             controller.start(myCrawler.class, 5); // 5 threads
@@ -68,9 +73,9 @@ public class crawler {
             List<Object> crawlersLocalData = controller.getCrawlersLocalData();
 
             for (Object localData : crawlersLocalData) {
-                /**
-                 * Get data
-                 */
+                // Get data
+                myCrawlerStats s = (myCrawlerStats) localData;
+                crawledUrls.addAll(s.getUrlsCrawled());
             }
         }
         catch (Exception ex) {
