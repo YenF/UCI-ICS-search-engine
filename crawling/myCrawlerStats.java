@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class myCrawlerStats {
+
 	private HashSet<String> urlsCrawled = new HashSet<String>();
 	private HashMap<String, Integer> pagesToCrawl = new HashMap<String, Integer>();
 
