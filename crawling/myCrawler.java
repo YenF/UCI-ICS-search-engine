@@ -16,12 +16,18 @@ public class myCrawler extends WebCrawler {
 			= Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|png|tiff|mid|mp2|mp3|mp4|" +
 			"|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz|ico|pfm|c|h|o))$");
 
+	private myCrawlerStats stats = new myCrawlerStats();
+
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) {
 
 		// Don't crawl non-HTML pages
 		String href = url.getURL().toLowerCase();
 		if (FILTERS.matcher(href).matches()) // filter using file extension
+			return false;
+
+		// Don't crawl the same pages too many times (avoid infinite loops)
+		if (!stats.intendToVisit(url.getURL()))
 			return false;
 
         // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
