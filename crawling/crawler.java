@@ -38,7 +38,7 @@ public class crawler {
             /**
              * 把你们两个的Student ID写在我的ID后面, 空一格
              */
-            config.setUserAgentString("UCI IR crawler 18601447 64688315");
+            config.setUserAgentString("UCI IR crawler 18601447");
             config.setIncludeBinaryContentInCrawling(false);
 
             // Instantiate controller
