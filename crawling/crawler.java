@@ -4,8 +4,7 @@ package crawling;
  * Created by Frank on 16/1/26.
  */
 
-import crawling.myCrawler;
-import storage.DocumentStorage;
+import storage.docStore;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,6 +15,7 @@ import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import storage.interDocStore;
 
 public class crawler {
     /**
@@ -23,29 +23,41 @@ public class crawler {
      * http://code.google.com/p/crawler4j/source/browse/src/test/java/edu/uci/ics/crawler4j/examples/basic/BasicCrawlController.java
      */
 
-    public static Collection<String> crawl(String seedURL, String intermediateStoragePath, int maxDepth, int maxPages) {
+    private static final int maxDepth = 1;
+
+    public static Collection<String> crawl(String seedURL) {
+        return crawl(seedURL, new docStore("docStorage"));
+    }
+
+    public static Collection<String> crawl(String seedURL, interDocStore docStorage) {
+        return crawl(seedURL, "intermediateStorage", docStorage, maxDepth, maxDepth);
+
+    }
+
+    public static Collection<String> crawl(String seedURL, String intermediateStoragePath,
+                        interDocStore documentStorage,int maxDepth, int maxPages) {
         HashSet<String> crawledUrls = new HashSet<String>();
 
         try {
             // Setup the crawler configuration
-            CrawlConfig config = new CrawlConfig();
-            config.setCrawlStorageFolder(intermediateStoragePath);
-            config.setPolitenessDelay(300);
-            config.setMaxDepthOfCrawling(maxDepth);
-            config.setMaxPagesToFetch(maxPages);
-            config.setResumableCrawling(true);
+            CrawlConfig myConfig = new CrawlConfig();
+            myConfig.setCrawlStorageFolder(intermediateStoragePath);
+            myConfig.setPolitenessDelay(300);
+            myConfig.setMaxDepthOfCrawling(maxDepth);
+            myConfig.setMaxPagesToFetch(maxPages);
+            myConfig.setResumableCrawling(true);
 
             /**
              * 把你们两个的Student ID写在我的ID后面, 空一格
              */
-            config.setUserAgentString("UCI IR crawler 18601447 64688315");
-            config.setIncludeBinaryContentInCrawling(false);
+            myConfig.setUserAgentString("UCI IR crawler 18601447 64688315");
+            myConfig.setIncludeBinaryContentInCrawling(false);
 
             // Instantiate controller
-            PageFetcher pageFetcher = new PageFetcher(config);
+            PageFetcher pageFetcher = new PageFetcher(myConfig);
             RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
             RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-            CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+            CrawlController controller = new CrawlController(myConfig, pageFetcher, robotstxtServer);
 
             controller.addSeed(seedURL);
 
