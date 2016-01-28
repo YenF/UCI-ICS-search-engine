@@ -1,12 +1,10 @@
 package crawling;
 
-import storage.DocumentStorage;
-
-import java.util.Collection;
+import storage.docStore;
 
 public class MainCrawler {
 	public static void main(String[] args) {
 
-		DocumentStorage documentStorage = new DocumentStorage();
+		docStore docStore = new docStore();
 	}
 }
