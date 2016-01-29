@@ -1,5 +1,8 @@
 package crawling;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.regex.Pattern;
 
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -44,6 +47,20 @@ public class myCrawler extends WebCrawler {
 		if (page.getParseData() instanceof HtmlParseData) { // make sure document has HTML data
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String html = htmlParseData.getHtml();
+
+			try {
+				File writeName = new File("/Users/Tristan/Desktop/sample.txt");
+				writeName.createNewFile();
+				BufferedWriter out = new BufferedWriter(new FileWriter(writeName));
+
+				out.write(html);
+//				out.newLine();
+
+				out.flush(); //push the buffer into file
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			// Store the information by SQL goes here
 			/**
