@@ -1,11 +1,16 @@
 package crawling;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.regex.Pattern;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+
+import storage.fileStorage;
 
 /*
  * General code structure borrowed from:
@@ -17,7 +22,15 @@ public class myCrawler extends WebCrawler {
 			"|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz|ico|pfm|c|h|o))$");
 
 	private myCrawlerStats stats = new myCrawlerStats();
-
+	
+	//by Yen
+	//could declare storage here
+	@Override
+	  public void onStart() {
+		//use this method to get instance, do not use new fileStorage()
+		  fileStorage fs = fileStorage.newInstance();
+	  }
+	
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) {
 
@@ -44,6 +57,20 @@ public class myCrawler extends WebCrawler {
 		if (page.getParseData() instanceof HtmlParseData) { // make sure document has HTML data
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String html = htmlParseData.getHtml();
+
+			try {
+				File writeName = new File("/Users/Tristan/Desktop/sample.txt");
+				writeName.createNewFile();
+				BufferedWriter out = new BufferedWriter(new FileWriter(writeName));
+
+				out.write(html);
+//				out.newLine();
+
+				out.flush(); //push the buffer into file
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			// Store the information by SQL goes here
 			/**
