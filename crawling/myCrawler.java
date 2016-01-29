@@ -10,6 +10,8 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
+import storage.fileStorage;
+
 /*
  * General code structure borrowed from:
  * http://code.google.com/p/crawler4j/source/browse/src/test/java/edu/uci/ics/crawler4j/examples/basic/BasicCrawler.java
@@ -20,7 +22,15 @@ public class myCrawler extends WebCrawler {
 			"|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz|ico|pfm|c|h|o))$");
 
 	private myCrawlerStats stats = new myCrawlerStats();
-
+	
+	//by Yen
+	//could declare storage here
+	@Override
+	  public void onStart() {
+		//use this method to get instance, do not use new fileStorage()
+		  fileStorage fs = fileStorage.newInstance();
+	  }
+	
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) {
 
