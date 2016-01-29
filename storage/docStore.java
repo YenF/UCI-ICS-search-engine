@@ -27,18 +27,22 @@ import java.io.IOException;
 
         public String getDocument(String url) {
             // return this database's url;
+            return null;
         }
 
         public Iterable<String> getCrawledUrls() {
             // The keys are all URLs
+            return null;
         }
 
         public Iterable<HtmlDocument> getAll() {
             // The values are raw HTML, return an iterator that returns HtmlDocuments (which parse the HTML)
+            return null;
         }
 
         public int getSize() {
             // return this database's size
+            return 0;
         }
 
         public void close() {
