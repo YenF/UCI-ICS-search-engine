@@ -26,7 +26,7 @@ public class myCrawler extends WebCrawler {
 		if (FILTERS.matcher(href).matches()) // filter using file extension
 			return false;
 
-		// Don't crawl the same pages too many times (avoid infinite loops)
+		// Don't crawl the same pages too many times
 		if (!stats.intendToVisit(url.getURL()))
 			return false;
 
