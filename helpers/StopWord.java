@@ -13,17 +13,12 @@ public class StopWord {
 	private static final String stopListFile = System.getProperty("user.dir") + File.separator + "StopWordList.txt";
 	private static HashSet<String> stopWords = new HashSet<String>(); 
 
-	/*
-	 * Static class load - one-time file IO for reading in the
-	 * stop words list and storing it in-memory when the application
-	 * is launched.
-	 */
 	static {
 		
 		// Read file and load list              
-		File f = new File(stopListFile);
+		File file = new File(stopListFile);
 		try {
-			BufferedReader input =  new BufferedReader(new FileReader(f));
+			BufferedReader input =  new BufferedReader(new FileReader(file));
 
 			try {
 				String line = null;
@@ -32,17 +27,14 @@ public class StopWord {
 					if (line != null)
 						stopWords.add(line.trim().toLowerCase());
 				}
-			}
-			finally {
+			} finally {
 				input.close();
 			}
-		}
-		catch (FileNotFoundException fnfe) {
-			System.err.println("Unable to locate stop word list file for processing: " + f.getAbsolutePath());
+		} catch (FileNotFoundException e) {
+			System.err.println("Unable to locate stop word: " + file.getAbsolutePath());
 			System.exit(0);
-		}
-		catch (IOException ioe) {
-			System.err.println(ioe.getMessage());
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
 			System.exit(0);
 		}
 	}
