@@ -77,9 +77,8 @@ public class crawler {
                 myCrawlerStats s = (myCrawlerStats) localData;
                 crawledUrls.addAll(s.getUrlsCrawled());
             }
-        }
-        catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
 
         return crawledUrls;
