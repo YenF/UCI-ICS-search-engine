@@ -9,43 +9,33 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
-import IRUtilities.*;
-import Pair.*;
-import edu.smu.tspell.wordnet.*;
+import data.IRUtilities.*;
+import data.Pair.*;
 import java.sql.*;
 
 public class TextProcessor {
 	public static Connection c = null;
 	public static Statement stmt = null;
-	public static List<String> tokenizeFile(String filename){
+	public static List<String> tokenizeFile(String inputstring){
 		List<String> list = new LinkedList<String>();
-		try{
-			FileReader filereader = new FileReader(filename);
-			BufferedReader bufferReader = new BufferedReader(filereader);
-			
-			String nextline;
-			StringBuilder builder = new StringBuilder();
-			Porter porter = new Porter();
-			while((nextline = bufferReader.readLine())!=null){
-				String[] strarry = nextline.split(" |, |\\.");
-				for(int i=0;i<strarry.length;i++){
-					if(strarry[i].length()>0 && !Stopwords.isStopword(strarry[i])) list.add(porter.stripAffixes(strarry[i]));
-				}
-			}
 
-			bufferReader.close();
+			//FileReader filereader = new FileReader(filename);
+			//BufferedReader bufferReader = new BufferedReader(filereader);
+			
+			//String nextline;
+			//StringBuilder builder = new StringBuilder();
+			Porter porter = new Porter();
+			
+			String[] strarry = inputstring.split(" |, |\\.");
+			for(int i=0;i<strarry.length;i++){
+				if(strarry[i].length()>0 && !Stopwords.isStopword(strarry[i])) list.add(porter.stripAffixes(strarry[i]));
+			}
+		
+
+			//bufferReader.close();
 			System.out.println("file is closing\n");
 			return list;
-		}
-        catch(FileNotFoundException ex) {
-            System.out.println(
-                "Unable to open file" );                
-        }
-        catch(IOException ex) {
-            System.out.println(
-                "Error for FileIO");                  
-        }
-		return list; 
+
 	}
 	public static void print(List<String> list){
 		Iterator<String> ite = list.iterator();
