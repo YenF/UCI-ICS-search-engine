@@ -20,14 +20,14 @@ import static java.util.Arrays.asList;
  * @author Yen
  *
  */
-public class tokenStorage {
+public class TokenStorage {
 	
-	private static final tokenStorage instance = null;
+	private static final TokenStorage instance = null;
 	private MongoClient client;
 	private MongoDatabase db;
 	private MongoCursor<Document> iter;
 	
-	public tokenStorage() {
+	public TokenStorage() {
 		client = new MongoClient( 
 	      		 new MongoClientURI(
 	      				"mongodb://UCI_Handsomes:UCI_Handsomes@ds041633.mongolab.com:41633/cs221") 
@@ -37,9 +37,9 @@ public class tokenStorage {
 	    System.out.println("---MongoDB initialized---");
 	}
 	
-	public static tokenStorage newInstance() {
+	public static TokenStorage newInstance() {
 		if ( instance==null ) {
-			tokenStorage ts = new tokenStorage();
+			TokenStorage ts = new TokenStorage();
 	        return ts;
 		}
 		return instance;

@@ -10,7 +10,7 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-import storage.fileStorage;
+import storage.FileStorage;
 
 /*
  * General code structure borrowed from:
@@ -28,7 +28,7 @@ public class myCrawler extends WebCrawler {
 	@Override
 	  public void onStart() {
 		//use this method to get instance, do not use new fileStorage()
-		  fileStorage fs = fileStorage.newInstance();
+		  FileStorage fs = FileStorage.newInstance();
 	  }
 	
 	@Override

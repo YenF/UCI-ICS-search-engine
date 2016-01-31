@@ -17,14 +17,14 @@ import com.mongodb.client.MongoDatabase;
  * @author Yen
  *
  */
-public class fileStorage {
+public class FileStorage {
 	
-	private static final fileStorage instance = null;
+	private static final FileStorage instance = null;
 	private MongoClient client;
 	private MongoDatabase db;
 	private MongoCursor<Document> iter;
 	
-	public fileStorage() {
+	public FileStorage() {
 		client = new MongoClient( 
 	      		 new MongoClientURI(
 	      			"mongodb://UCI_Handsomes:UCI_Handsomes@ds051635.mongolab.com:51635/cs221_rawpages") 
@@ -34,9 +34,9 @@ public class fileStorage {
 	    System.out.println("---MongoDB initialized---");
 	}
 	
-	public static fileStorage newInstance() {
+	public static FileStorage newInstance() {
 		if ( instance==null ) {
-	        fileStorage fs = new fileStorage();
+	        FileStorage fs = new FileStorage();
 	        return fs;
 		}
 		return instance;
