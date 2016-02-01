@@ -23,13 +23,12 @@ public class myCrawler extends WebCrawler {
 
 	private myCrawlerStats stats = new myCrawlerStats();
 	
-	//by Yen
-	//could declare storage here
+	//From Yen
+	//Can declear sth when crawler starts. This function will only runs once.
 	@Override
-	  public void onStart() {
-		//use this method to get instance, do not use new fileStorage()
-		  FileStorage fs = FileStorage.newInstance();
-	  }
+	public void onStart() {
+	  
+	}
 	
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) {

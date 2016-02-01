@@ -12,7 +12,6 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * Use fileStorage fs = fileStorage.newInstance()  
  * Operation related to URL page could be found here.
  * @author Yen
  *
@@ -34,6 +33,7 @@ public class FileStorage {
 	    System.out.println("---MongoDB initialized---");
 	}
 	
+	/*	use mono instance will occur concurrency problem
 	public static FileStorage newInstance() {
 		if ( instance==null ) {
 	        FileStorage fs = new FileStorage();
@@ -41,6 +41,14 @@ public class FileStorage {
 		}
 		return instance;
     }
+	*/
+	
+	/**
+	 * remove all elements in DB
+	 */
+	public void reset() {
+		db.getCollection("URL_Pages").drop();
+	}
 	
 	/**
 	* Insert an URL page into DB, uniqueness is determined by URL

@@ -15,7 +15,6 @@ import com.mongodb.client.MongoDatabase;
 import static java.util.Arrays.asList;
 
 /**
- * Use tokenStorage ts = tokenStorage.newInstance()  
  * Operation related to tokens, three-grams could be find here.
  * @author Yen
  *
@@ -37,6 +36,7 @@ public class TokenStorage {
 	    System.out.println("---MongoDB initialized---");
 	}
 	
+	/*	use mono instance will occur concurrency problem
 	public static TokenStorage newInstance() {
 		if ( instance==null ) {
 			TokenStorage ts = new TokenStorage();
@@ -44,6 +44,15 @@ public class TokenStorage {
 		}
 		return instance;
     }
+	*/
+	
+	/**
+	 * remove all elements in DB
+	 */
+	public void reset() {
+		db.getCollection("tokens").drop();
+		db.getCollection("threegrams").drop();
+	}
 	
 	/**
 	    * Insert token into DB. 
