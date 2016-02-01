@@ -8,8 +8,10 @@ import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 
 /**
  * Operation related to URL page could be found here.
@@ -47,7 +49,11 @@ public class FileStorage {
 	 * remove all elements in DB
 	 */
 	public void reset() {
-		db.getCollection("URL_Pages").drop();
+		MongoCollection coll = db.getCollection("URL_Pages");
+		coll.drop();
+		IndexOptions IndOpt = new IndexOptions();
+		IndOpt.unique(true);
+		coll.createIndex ( new Document("URL",1) , IndOpt);
 	}
 	
 	/**
@@ -85,19 +91,19 @@ public class FileStorage {
 	   if ( !iter.hasNext() ) return null;
 	   Document tmpDoc = iter.next();
 	   tmp = new HashMap<String,String>();
-	   tmp.put( "URL", tmpDoc.getString("URL") );
+	   tmp.put( tmpDoc.getString("URL"), tmpDoc.getString("content") );
 	   Map.Entry<String, String> ret = tmp.entrySet().iterator().next();
 	   return ret;
    }
    
    /**
-	* Get page by URL. Page will be in String format. Only one page will be returned.
+	* Get page content by URL. Page will be in String format. Only one page will be returned.
 	* @param URL
 	* @return page content in String format
 	*/
    public String getPageByURL(String URL) {
 	   FindIterable<Document> it = db.getCollection("URL_Pages").find( new Document("URL",URL) );
-   return it.iterator().next().getString("URL");
+	   return it.iterator().next().getString("content");
    }
 	   
 }
