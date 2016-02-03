@@ -46,7 +46,7 @@ public class FileStorage {
 	*/
 	
 	/**
-	 * remove all elements in DB
+	 * remove all stored pages in DB. Use it wisely.
 	 */
 	public void reset() {
 		MongoCollection coll = db.getCollection("URL_Pages");
@@ -62,7 +62,7 @@ public class FileStorage {
 	* Insert an URL page into DB, uniqueness is determined by URL
 	* @param URL
 	* @param content
-	* @return
+	* @return True for success, False for something wrong
 	*/
    public boolean insertURLPage(String URL, String content) {
 	   //get collection

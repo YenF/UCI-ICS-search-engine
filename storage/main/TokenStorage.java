@@ -1,15 +1,12 @@
 package storage.main;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
 
 import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -56,7 +53,7 @@ public class TokenStorage {
 	*/
 	
 	/**
-	 * remove all elements in DB
+	 * remove all tokens and 3-grams in DB. Use it wisely.
 	 */
 	public void reset() {
 		MongoCollection coll;
@@ -92,7 +89,7 @@ public class TokenStorage {
 	   }
 	   
 	   /**
-	    * NOT TEST YET. Get count of specific token in collections
+	    * Get count of specific token in collections
 	    * @param token
 	    * @return number of occurrence in whole collection
 	    */
@@ -112,7 +109,7 @@ public class TokenStorage {
 	   }
 	   
 	   /**
-	    * NOT TEST YET. List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
+	    * List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
 	    * @param num
 	    * @return
 	    */
