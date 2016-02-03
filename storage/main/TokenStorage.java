@@ -71,96 +71,149 @@ public class TokenStorage {
 	}
 	
 	/**
-	    * Insert token into DB. 
-	    * @param token
-	    * @param frequency Should be total count of "this URL(page)"
+	    * Insert token into DB.
+	    * @param p 
 	    * @param URL
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
-	   public boolean insertToken( String token, int frequency, String URL ) {
-		   try{
-			   db.getCollection(TOKEN_COLL_NAME).insertOne( 
-					   new Document("token", token).append("frequency", frequency).append("URL", URL)
-					   );
-		   } catch( Exception e ) {
-			   return false;	//if duplicate or something wrong
+	   public boolean insertToken( List<Pair> p, String URL ) {
+		   for ( int i=0; i<p.size(); i++ ) {
+			   insertToken( p.get(i).getT(), p.get(i).getE(), URL );
 		   }
 		   return true;
 	   }
-	   
-	   /**
-	    * Get count of specific token in collections
-	    * @param token
-	    * @return number of occurrence in whole collection
-	    */
-	   public int getTokenFreq( final String token ) {
-		   int ans=0;
-		   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
-				   new Document( "$match", new Document("token", token) ),
-			        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency")))));
-		   /*
-		   iterable.forEach(new Block<Document>() {
-			    public void apply(final Document document) {
-			    	System.out.println(document.toJson());
-			    }
-			});
-			*/
-		   return iterable.first().getInteger("count");
+	
+	/**
+    * Insert token into DB. 
+    * @param token
+    * @param frequency Should be total count of "this URL(page)"
+    * @param URL
+    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
+    */
+   public boolean insertToken( String token, int frequency, String URL ) {
+	   try{
+		   db.getCollection(TOKEN_COLL_NAME).insertOne( 
+				   new Document("token", token).append("frequency", frequency).append("URL", URL)
+				   );
+	   } catch( Exception e ) {
+		   return false;	//if duplicate or something wrong
 	   }
-	   
-	   /**
-	    * List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
-	    * @param num
-	    * @return
-	    */
-	   public List<Map.Entry<String,Integer>> getHighestFreq_Token( int num ) {
-		   //final?...
-		   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
-		   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
-				   new Document( "$sort", new Document( "count", -1 ) ),
-				   new Document( "$limit", num ),
-			        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
-		   iterable.forEach(new Block<Document>() {
-			    public void apply(final Document document) {
-			    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
-			    	//HashMap<String, Integer> tmpHash = new HashMap<String, Integer>();
-			    	
-			    	ans.add( new AbstractMap.SimpleEntry<String, Integer>
-			    		( document.getString("_id"), document.getInteger("count") ) 
-			    			);
-			    }
-			});
-		   return ans;
+	   return true;
+   }
+   
+   /**
+    * Get count of specific token in collections
+    * @param token
+    * @return number of occurrence in whole collection
+    */
+   public int getTokenFreq( final String token ) {
+	   int ans=0;
+	   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
+			   new Document( "$match", new Document("token", token) ),
+		        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency")))));
+	   /*
+	   iterable.forEach(new Block<Document>() {
+		    public void apply(final Document document) {
+		    	System.out.println(document.toJson());
+		    }
+		});
+		*/
+	   return iterable.first().getInteger("count");
+   }
+   
+   /**
+    * List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
+    * @param num
+    * @return
+    */
+   public List<Map.Entry<String,Integer>> getHighestFreq_Token( int num ) {
+	   //final?...
+	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
+	   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
+			   new Document( "$sort", new Document( "count", -1 ) ),
+			   new Document( "$limit", num ),
+		        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
+	   iterable.forEach(new Block<Document>() {
+		    public void apply(final Document document) {
+		    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
+		    	//HashMap<String, Integer> tmpHash = new HashMap<String, Integer>();
+		    	
+		    	ans.add( new AbstractMap.SimpleEntry<String, Integer>
+		    		( document.getString("_id"), document.getInteger("count") ) 
+		    			);
+		    }
+		});
+	   return ans;
+   }
+   
+   //Three gram
+   
+   /**
+    * Insert 3G into DB.
+    * @param p 
+    * @param URL
+    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
+    */
+   public boolean insert3G( List<Pair> p, String URL ) {
+	   for ( int i=0; i<p.size(); i++ ) {
+		   insert3G( p.get(i).getT(), p.get(i).getE(), URL );
 	   }
-	   
-	   //Three gram
-	   
-	   /**
-	    * NOT DONE YET. Insert three-gram into DB. 
-	    * @param token
-	    * @param frequency Should be total count of "this URL(page)"
-	    * @param URL
-	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
-	    */
-	   public boolean insert3G( String token, int frequency, String URL ) {
-		   try{
-			   db.getCollection(TGRAM_COLL_NAME).insertOne( 
-					   new Document("token", token).append("frequency", frequency).append("URL", URL)
-					   );
-		   } catch( Exception e ) {
-			   return false;	//if duplicate or something wrong
-		   }
-		   return true;
+	   return true;
+   }
+   
+   /**
+    * Insert three-gram into DB. 
+    * @param token
+    * @param frequency Should be total count of "this URL(page)"
+    * @param URL
+    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
+    */
+   public boolean insert3G( String token, int frequency, String URL ) {
+	   try{
+		   db.getCollection(TGRAM_COLL_NAME).insertOne( 
+				   new Document("token", token).append("frequency", frequency).append("URL", URL)
+				   );
+	   } catch( Exception e ) {
+		   return false;	//if duplicate or something wrong
 	   }
+	   return true;
+   }
+   
+   /**
+    * Get count of specific token in collections
+    * @param token
+    * @return
+    */
+   public int get3GFreq( String token ) {
+	   AggregateIterable<Document> iterable = db.getCollection(TGRAM_COLL_NAME).aggregate(asList(
+			   new Document( "$match", new Document("token", token) ),
+		        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency")))));
 	   
-	   /**
-	    * NOT DONE YET.
-	    * @param token
-	    * @return
-	    */
-	   public int get3GFreq( String token ) {
-		   int ans=0;
-		   
-		   return ans;
-	   }
+	   return iterable.first().getInteger("count");
+   }
+   
+   /**
+    * List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
+    * @param num
+    * @return 
+    */
+   public List<Map.Entry<String,Integer>> getHighestFreq_3G( int num ) {
+	 //final?...
+	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
+	   AggregateIterable<Document> iterable = db.getCollection(TGRAM_COLL_NAME).aggregate(asList(
+			   new Document( "$sort", new Document( "count", -1 ) ),
+			   new Document( "$limit", num ),
+		        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
+	   iterable.forEach(new Block<Document>() {
+		    public void apply(final Document document) {
+		    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
+		    	//HashMap<String, Integer> tmpHash = new HashMap<String, Integer>();
+		    	
+		    	ans.add( new AbstractMap.SimpleEntry<String, Integer>
+		    		( document.getString("_id"), document.getInteger("count") ) 
+		    			);
+		    }
+		});
+	   return ans;
+   }
 }
