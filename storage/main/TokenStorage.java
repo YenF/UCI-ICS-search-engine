@@ -1,6 +1,7 @@
-package storage;
+package storage.main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,9 +11,14 @@ import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+
 import static java.util.Arrays.asList;
+
+import java.util.AbstractMap;
 
 /**
  * Operation related to tokens, three-grams could be find here.
@@ -21,19 +27,22 @@ import static java.util.Arrays.asList;
  */
 public class TokenStorage {
 	
-	private static final TokenStorage instance = null;
-	private MongoClient client;
+	public final static String TOKEN_COLL_NAME = "tokens";
+	public final static String TGRAM_COLL_NAME = "threeGrams";
+	public final static String TOKEN_DB_NAME = "cs221";
+	public final static String URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds041633.mongolab.com:41633/cs221"; 
+	//private static final TokenStorage instance = null;
+	//private MongoClient client;
 	private MongoDatabase db;
 	private MongoCursor<Document> iter;
 	
 	public TokenStorage() {
-		client = new MongoClient( 
-	      		 new MongoClientURI(
-	      				"mongodb://UCI_Handsomes:UCI_Handsomes@ds041633.mongolab.com:41633/cs221") 
-	      		 );
+		MongoDB DB = new MongoDB();
+		DB.init(URI, TOKEN_DB_NAME);
+		
 	       // Now connect to your databases
-	    db = client.getDatabase("cs221");
-	    System.out.println("---MongoDB initialized---");
+	    db = DB.db;
+	    //System.out.println("---MongoDB initialized---");
 	}
 	
 	/*	use mono instance will occur concurrency problem
@@ -50,8 +59,18 @@ public class TokenStorage {
 	 * remove all elements in DB
 	 */
 	public void reset() {
-		db.getCollection("tokens").drop();
-		db.getCollection("threegrams").drop();
+		MongoCollection coll;
+		db.getCollection(TOKEN_COLL_NAME).drop();
+		db.createCollection(TOKEN_COLL_NAME);
+		coll = db.getCollection(TOKEN_COLL_NAME);
+		IndexOptions IndOpt = new IndexOptions();
+		IndOpt.unique(true);
+		coll.createIndex ( new Document("token",1).append("URL", 1) , IndOpt);
+		
+		db.getCollection(TGRAM_COLL_NAME).drop();
+		db.createCollection(TGRAM_COLL_NAME);
+		coll = db.getCollection(TGRAM_COLL_NAME);
+		coll.createIndex ( new Document("token",1).append("URL", 1) , IndOpt);
 	}
 	
 	/**
@@ -63,7 +82,7 @@ public class TokenStorage {
 	    */
 	   public boolean insertToken( String token, int frequency, String URL ) {
 		   try{
-			   db.getCollection("tokens").insertOne( 
+			   db.getCollection(TOKEN_COLL_NAME).insertOne( 
 					   new Document("token", token).append("frequency", frequency).append("URL", URL)
 					   );
 		   } catch( Exception e ) {
@@ -73,41 +92,48 @@ public class TokenStorage {
 	   }
 	   
 	   /**
-	    * NOT DONE YET. Get count of specific token in collections
+	    * NOT TEST YET. Get count of specific token in collections
 	    * @param token
-	    * @return number of occurrence
+	    * @return number of occurrence in whole collection
 	    */
 	   public int getTokenFreq( final String token ) {
 		   int ans=0;
-		   AggregateIterable<Document> iterable = db.getCollection("cs221").aggregate(asList(
+		   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
 				   new Document( "$match", new Document("token", token) ),
-			        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
+			        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency")))));
+		   /*
 		   iterable.forEach(new Block<Document>() {
 			    public void apply(final Document document) {
 			    	System.out.println(document.toJson());
 			    }
 			});
-		   
-
-		   return ans;
+			*/
+		   return iterable.first().getInteger("count");
 	   }
 	   
 	   /**
-	    * NOT DONE YET. List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
+	    * NOT TEST YET. List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
 	    * @param num
 	    * @return
 	    */
 	   public List<Map.Entry<String,Integer>> getHighestFreq_Token( int num ) {
-		   AggregateIterable<Document> iterable = db.getCollection("cs221").aggregate(asList(
+		   //final?...
+		   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
+		   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
 				   new Document( "$sort", new Document( "count", -1 ) ),
 				   new Document( "$limit", num ),
 			        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
 		   iterable.forEach(new Block<Document>() {
 			    public void apply(final Document document) {
-			    	System.out.println(document.toJson());
+			    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
+			    	//HashMap<String, Integer> tmpHash = new HashMap<String, Integer>();
+			    	
+			    	ans.add( new AbstractMap.SimpleEntry<String, Integer>
+			    		( document.getString("_id"), document.getInteger("count") ) 
+			    			);
 			    }
 			});
-		   return new ArrayList<Map.Entry<String,Integer>>();
+		   return ans;
 	   }
 	   
 	   //Three gram
@@ -120,7 +146,13 @@ public class TokenStorage {
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
 	   public boolean insert3G( String token, int frequency, String URL ) {
-		   
+		   try{
+			   db.getCollection(TGRAM_COLL_NAME).insertOne( 
+					   new Document("token", token).append("frequency", frequency).append("URL", URL)
+					   );
+		   } catch( Exception e ) {
+			   return false;	//if duplicate or something wrong
+		   }
 		   return true;
 	   }
 	   

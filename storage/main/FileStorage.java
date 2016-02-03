@@ -1,4 +1,4 @@
-package storage;
+package storage.main;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +53,8 @@ public class FileStorage {
 		coll.drop();
 		IndexOptions IndOpt = new IndexOptions();
 		IndOpt.unique(true);
+		db.createCollection("URL_Pages");
+		coll = db.getCollection("URL_Pages");
 		coll.createIndex ( new Document("URL",1) , IndOpt);
 	}
 	
