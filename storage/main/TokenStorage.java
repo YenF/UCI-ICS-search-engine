@@ -13,6 +13,8 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 
+import data.Pair.Pair;
+
 import static java.util.Arrays.asList;
 
 import java.util.AbstractMap;
@@ -130,9 +132,10 @@ public class TokenStorage {
 	   //final?...
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
 	   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
-			   new Document( "$sort", new Document( "count", -1 ) ),
-			   new Document( "$limit", num ),
-		        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
+			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency"))),
+				new Document( "$limit", num ),
+				new Document( "$sort", new Document( "count", -1 ) )
+		        ));
 	   iterable.forEach(new Block<Document>() {
 		    public void apply(final Document document) {
 		    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
@@ -180,7 +183,7 @@ public class TokenStorage {
    }
    
    /**
-    * Get count of specific token in collections
+    * Get count of specific 3-gram in collections
     * @param token
     * @return
     */
@@ -193,7 +196,7 @@ public class TokenStorage {
    }
    
    /**
-    * List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
+    * List highest frequency ranks of 3-grams. If num=10, list top 10 of 3-grams.
     * @param num
     * @return 
     */
@@ -201,9 +204,11 @@ public class TokenStorage {
 	 //final?...
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
 	   AggregateIterable<Document> iterable = db.getCollection(TGRAM_COLL_NAME).aggregate(asList(
-			   new Document( "$sort", new Document( "count", -1 ) ),
+			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency"))),
 			   new Document( "$limit", num ),
-		        new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", 1)))));
+			   new Document( "$sort", new Document( "count", -1 ) )
+		        )
+			   );
 	   iterable.forEach(new Block<Document>() {
 		    public void apply(final Document document) {
 		    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
