@@ -28,31 +28,30 @@ public class TokenStorage {
 	
 	public final static String TOKEN_COLL_NAME = "tokens";
 	public final static String TGRAM_COLL_NAME = "threeGrams";
-	public final static String TOKEN_DB_NAME = "cs221";
-	public final static String URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds041633.mongolab.com:41633/cs221"; 
+	public final static String TOKEN_DB_NAME = "cs221_tokens";
+	public final static String MONGOLAB_URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds041633.mongolab.com:41633/cs221_tokens";
+	public final static String ICS_URI = 
+			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
+	public final static String LOCAL_URI = 
+			"mongodb://127.0.0.1/";
 	//private static final TokenStorage instance = null;
 	//private MongoClient client;
+	private MongoDB DB;
 	private MongoDatabase db;
 	private MongoCursor<Document> iter;
 	
-	public TokenStorage() {
-		MongoDB DB = new MongoDB();
+	/**
+	 * connect to MONGOLAB_URI, ICS_URI or LOCAL_URI
+	 * @param URI
+	 */
+	public TokenStorage( String URI ) {
+		DB = new MongoDB();
 		DB.init(URI, TOKEN_DB_NAME);
 		
 	       // Now connect to your databases
 	    db = DB.db;
 	    //System.out.println("---MongoDB initialized---");
 	}
-	
-	/*	use mono instance will occur concurrency problem
-	public static TokenStorage newInstance() {
-		if ( instance==null ) {
-			TokenStorage ts = new TokenStorage();
-	        return ts;
-		}
-		return instance;
-    }
-	*/
 	
 	/**
 	 * remove all tokens and 3-grams in DB. Use it wisely.

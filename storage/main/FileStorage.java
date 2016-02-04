@@ -21,29 +21,28 @@ import com.mongodb.client.model.IndexOptions;
 public class FileStorage {
 	
 	private static final FileStorage instance = null;
-	private MongoClient client;
+	private MongoDB DB;
 	private MongoDatabase db;
 	private MongoCursor<Document> iter;
-	
-	public FileStorage() {
-		client = new MongoClient( 
-	      		 new MongoClientURI(
-	      			"mongodb://UCI_Handsomes:UCI_Handsomes@ds051635.mongolab.com:51635/cs221_rawpages") 
-	      		 );
+	public final static String RAWPAGE_DB_NAME = "cs221_rawpages";
+	public final static String MONGOLAB_URI = 
+			"mongodb://UCI_Handsomes:UCI_Handsomes@ds051635.mongolab.com:51635/cs221_rawpages";
+	public final static String ICS_URI = 
+			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
+	public final static String LOCAL_URI = 
+			"mongodb://127.0.0.1/";
+	/**
+	 * connect to MONGOLAB_URI, ICS_URI or LOCAL_URI
+	 * @param URI
+	 */
+	public FileStorage( String URI ) {
+		
+	    DB = new MongoDB();
+		DB.init(URI, RAWPAGE_DB_NAME);
+		
 	       // Now connect to your databases
-	    db = client.getDatabase("cs221_rawpages");
-	    System.out.println("---MongoDB initialized---");
+	    db = DB.db;
 	}
-	
-	/*	use mono instance will occur concurrency problem
-	public static FileStorage newInstance() {
-		if ( instance==null ) {
-	        FileStorage fs = new FileStorage();
-	        return fs;
-		}
-		return instance;
-    }
-	*/
 	
 	/**
 	 * remove all stored pages in DB. Use it wisely.
