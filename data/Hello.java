@@ -1,10 +1,11 @@
+package data;
 import java.io.*;
 import java.lang.Object.*;
 import java.math.BigInteger;
 import java.util.*;
-import IRUtilities.*;
-import Pair.Pair;
-import text_processing.*;
+import data.IRUtilities.*;
+import data.Pair.Pair;
+import data.text_processing.*;
 import java.sql.*;
 
 public class Hello
