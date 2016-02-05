@@ -29,7 +29,7 @@ public class TokenStorage {
 	public final static String TOKEN_COLL_NAME = "tokens";
 	public final static String TGRAM_COLL_NAME = "threeGrams";
 	public final static String TOKEN_DB_NAME = "cs221_tokens";
-	public final static String MONGOLAB_URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds041633.mongolab.com:41633/cs221_tokens";
+	public final static String MONGOLAB_URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds055535.mongolab.com:55535/cs221_tokens";
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
 	public final static String LOCAL_URI = 
