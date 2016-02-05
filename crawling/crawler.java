@@ -48,9 +48,9 @@ public class crawler {
             myConfig.setResumableCrawling(true);
 
             /**
-             * 把你们两个的Student ID写在我的ID后面, 空一格
+             * ���賑銝支葵��tudent ID�����D��, 蝛箔��
              */
-            myConfig.setUserAgentString("UCI IR crawler 18601447 64688315");
+            myConfig.setUserAgentString("UCI IR crawler 18601447 64688315 15201360");
             myConfig.setIncludeBinaryContentInCrawling(false);
             
             myCrawlerParams params = new myCrawlerParams();
