@@ -67,7 +67,7 @@ public class BasicCrawler extends WebCrawler {
   @Override
   public void visit(Page page) {
     pagecount++;
-    if(tokengen==null) tokengen = new tokenGen();
+    //if(tokengen==null) tokengen = new tokenGen();
 	int docid = page.getWebURL().getDocid();
     String url = page.getWebURL().getURL();
     String domain = page.getWebURL().getDomain();
