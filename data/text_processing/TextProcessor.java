@@ -26,21 +26,39 @@ public class TextProcessor {
 			//StringBuilder builder = new StringBuilder();
 			Porter porter = new Porter();
 			
-			String[] strarry = inputstring.split(" |, |\\.");
+			String[] strarry = inputstring.split("\\s+|,+|\\.+|[\\r\\n]+");
 			for(int i=0;i<strarry.length;i++){
-				if(strarry[i].length()>0 && !Stopwords.isStopword(strarry[i])) list.add(porter.stripAffixes(strarry[i]));
+				if(strarry[i].length()>0 && !Stopwords.isStopword(strarry[i])){
+					String tempstr = porter.stripAffixes(strarry[i]);
+					//if(tempstr.length()==0) continue;
+					list.add(tempstr);
+				}
 			}
 		
 
 			//bufferReader.close();
-			System.out.println("file is closing\n");
+			/*System.out.println("file is closing\n");
+			System.out.println("in token 20 is "+list.get(20));
+			System.out.println(list.get(20).length());
+			System.out.println("in token 21 is "+list.get(21));
+			System.out.println(list.get(21).length());
+			System.out.println("in token 22 is "+list.get(22));
+			System.out.println(list.get(22).length());*/
+
 			return list;
 
 	}
 	public static void print(List<String> list){
 		Iterator<String> ite = list.iterator();
+		int i=0;
+		String test1="\n",test2="\r";
 		while(ite.hasNext()){
-			System.out.println(ite.next());
+			String tempstr = ite.next();
+			if(tempstr.length()==0) continue;
+			//System.out.println(i++);
+			//System.out.println(test1.equals(tempstr));
+			//System.out.println(test2.equals(tempstr));
+			System.out.println(tempstr);
 		}
 		return;
 	}
@@ -77,10 +95,18 @@ public class TextProcessor {
 	}
 	public static Pair[] computeThreeGramFrequencies(List<String> list){
 		String[] strarry = list.toArray(new String[0]);
+		/*System.out.println("20 is "+list.get(20));
+		System.out.println("21 is "+list.get(21));
+		System.out.println("22 is "+list.get(22));
+		System.out.println("!!20 is "+strarry[20]);
+		System.out.println("!!21 is "+strarry[21]);
+		System.out.println("!!22 is "+strarry[22]);*/
+
 		Hashtable<String,Integer> hash = new Hashtable<String,Integer>();
 		String tempstr;
 		Integer tempint;
 		for(int i=0;i<(strarry.length-2);i++){
+			//if(strarry[i].length()==0) System.out.printf("Warning!Warning!\nstrarry[%d] is empty\nstrarry[%d] is %s\nstrarry[%d] is %s\n",i,i-1,strarry[i-1],i+1,strarry[i+1]);
 			tempstr = strarry[i]+" "+strarry[i+1]+" "+strarry[i+2];
 			tempint = hash.get(tempstr);
 			if(tempint==null){
