@@ -17,9 +17,12 @@ import storage.main.*;
  * Created by Frank on 16/1/26.
  */
 public class tokenGen {
-	public static int tokenAnd3gram(String input, String URL){
+	private  TokenStorage tokenstore;
+	public tokenGen(){
+		tokenstore= new TokenStorage(TokenStorage.MONGOLAB_URI);
+	}
+	public int tokenAnd3gram(String input, String URL){
 		int result = 0;
-		TokenStorage tokenstore = new TokenStorage(TokenStorage.MONGOLAB_URI);
 		List<String> list = TextProcessor.tokenizeFile(input);
 		Pair[] pairfreq = TextProcessor.computeWordFrequencies(list);
 		List<Pair> listfreq = new ArrayList<Pair>(Arrays.asList(pairfreq));
