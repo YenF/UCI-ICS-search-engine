@@ -62,7 +62,7 @@ public class BasicCrawlController {
      * Be polite: Make sure that we don't send more than 1 request per
      * second (1000 milliseconds between requests).
      */
-    config.setPolitenessDelay(500);
+    config.setPolitenessDelay(600);
     config.setConnectionTimeout(1000*100);//60s
     config.setSocketTimeout(1000*100);
     /*
@@ -99,7 +99,7 @@ public class BasicCrawlController {
      * want to start a fresh crawl, you need to delete the contents of
      * rootFolder manually.
      */
-    config.setResumableCrawling(false);
+    config.setResumableCrawling(true);
 
     /*
      * Instantiate the controller for this crawl.

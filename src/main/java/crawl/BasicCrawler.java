@@ -40,8 +40,8 @@ public class BasicCrawler extends WebCrawler {
   
   @Override
   public void onStart() {
-	  filestorage = new FileStorage (FileStorage.MONGOLAB_URI);
-	  tokenstore = new TokenStorage(TokenStorage.MONGOLAB_URI);
+	  filestorage = new FileStorage (FileStorage.LOCAL_URI);
+	  tokenstore = new TokenStorage(TokenStorage.LOCAL_URI);
   }
   
   /**
@@ -87,10 +87,11 @@ public class BasicCrawler extends WebCrawler {
     if (page.getParseData() instanceof HtmlParseData) {
       HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
       String text = htmlParseData.getText();
-      List<String> list = TextProcessor.tokenizeFile(text);
+      //List<String> list = TextProcessor.tokenizeFile(text);
       System.out.println("*****************************************");
       filestorage.insertURLPage(url,text);
       System.out.printf("pagecount is %d\n",pagecount);
+      /*
       if((pagecount%3)==0){
     	  System.out.println("the result from mongodb");
     	  List<Map.Entry<String,Integer>> wordlist = tokenstore.getHighestFreq_Token(20);
@@ -112,6 +113,7 @@ public class BasicCrawler extends WebCrawler {
       logger.debug("Text length: {}", text.length());
       logger.debug("Html length: {}", html.length());
       logger.debug("Number of outgoing links: {}", links.size());
+      */
     }
 
     Header[] responseHeaders = page.getFetchResponseHeaders();
