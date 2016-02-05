@@ -36,9 +36,15 @@ public class BasicCrawler extends WebCrawler {
   private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|png|tiff|mid|mp2|mp3|mp4|" +
 			"|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz|ico|pfm|c|h|o))$");
   private int pagecount=0;
-  private FileStorage filestorage = new FileStorage (FileStorage.MONGOLAB_URI);
-  private TokenStorage tokenstore = new TokenStorage(TokenStorage.MONGOLAB_URI);
-
+  private FileStorage filestorage; 
+  private TokenStorage tokenstore; 
+  
+  @Override
+  public void onStart() {
+	  filestorage = new FileStorage (FileStorage.MONGOLAB_URI);
+	  tokenstore = new TokenStorage(TokenStorage.MONGOLAB_URI);
+  }
+  
   /**
    * You should implement this function to specify whether the given url
    * should be crawled or not (based on your crawling logic).
