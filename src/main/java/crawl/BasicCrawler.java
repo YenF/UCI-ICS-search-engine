@@ -41,6 +41,7 @@ public class BasicCrawler extends WebCrawler {
         private FileStorage filestorage;
         private TokenStorage tokenstore;
         private BasicCrawlStats visitStats;
+        private List<Map.Entry<String, String>> pages;
   
         @Override
         public void onStart() {
@@ -103,26 +104,18 @@ public class BasicCrawler extends WebCrawler {
 
                     HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
                     String text = htmlParseData.getText();
-                    List<String> list = TextProcessor.tokenizeFile(text);
-                    System.out.println("*****************************************");
-                    filestorage.insertURLPage(url,text);
-                    System.out.printf("pagecount is %d\n",pagecount);
-
-                    if((pagecount%3)==0){
-                            System.out.println("the result from mongodb");
-                            List<Map.Entry<String,Integer>> wordlist = tokenstore.getHighestFreq_Token(20);
-                            int size = wordlist.size();
-                            for(int i=0;i<size;i++){
-                                Map.Entry<String,Integer> tempmap = wordlist.get(i);
-                                System.out.printf("%s %d\n",tempmap.getKey(),tempmap.getValue() );
-                        }
-                        System.out.printf("\n\n");
+                    
+                    
+                    //filestorage.insertURLPage(url,text);
+                    pages.add(new AbstractMap.SimpleEntry(url, text));
+                    //commit into DB for every 20 pages
+                    if ( pagecount % 20 == 0 ) {
+                    	System.out.println("**********Inserting**********************");
+                    	filestorage.insertURLPage(pages);
+                    	System.out.println("**********Insert complete****************");
                     }
-                    //TextProcessor.print(list);
-                    //TextProcessor.print(TextProcessor.computeWordFrequencies(list));
-                    //TextProcessor.print3g(TextProcessor.computeThreeGramFrequencies(list));
-                    tokengen.tokenAnd3gram(text,url);
-                    System.out.println("*****************************************");
+                    
+                    
                     String html = htmlParseData.getHtml();
                     Set<WebURL> links = htmlParseData.getOutgoingUrls();
 
@@ -139,5 +132,11 @@ public class BasicCrawler extends WebCrawler {
                     }
               }
               logger.debug("=============");
+      }
+      
+      public void onBeforeExit() {
+    	    // Do nothing by default
+    	    // Sub-classed can override this to add their custom functionality
+    	  filestorage.insertURLPage(pages);
       }
 }

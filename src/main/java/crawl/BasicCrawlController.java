@@ -25,6 +25,7 @@ import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import storage.main.FileStorage;
 
 /**
  * @author Yasser Ganjisaffar
@@ -40,7 +41,10 @@ public class BasicCrawlController {
                 logger.info("\t numberOfCralwers (number of concurrent threads)");
                 return;
             }
-
+            
+            FileStorage fs = new FileStorage(FileStorage.MONGOLAB_URI);
+            fs.reset();
+            
           /*
            * crawlStorageFolder is a folder where intermediate crawl data is
            * stored.
