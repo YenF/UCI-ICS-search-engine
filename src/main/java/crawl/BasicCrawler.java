@@ -48,6 +48,7 @@ public class BasicCrawler extends WebCrawler {
              filestorage = new FileStorage (FileStorage.MONGOLAB_URI);
              tokenstore = new TokenStorage(TokenStorage.MONGOLAB_URI);
              visitStats = new BasicCrawlStats();
+             pages = new ArrayList();
         }
   
         /**
@@ -62,7 +63,7 @@ public class BasicCrawler extends WebCrawler {
                 return false;
               }
               // Don't crawl the same pages too many times
-
+              /*
               try {
                   if (!visitStats.intendToVisit(url.getURL())){
                     return false;
@@ -70,7 +71,7 @@ public class BasicCrawler extends WebCrawler {
               } catch (URISyntaxException e) {
                   e.printStackTrace();
               }
-
+			*/
               // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
               return href.contains(".ics.uci.edu/");
         }
@@ -83,7 +84,7 @@ public class BasicCrawler extends WebCrawler {
       public void visit(Page page) {
 
               pagecount++;
-              if(tokengen==null) tokengen = new tokenGen();
+              //if(tokengen==null) tokengen = new tokenGen();
               int docid = page.getWebURL().getDocid();
               String url = page.getWebURL().getURL();
               String domain = page.getWebURL().getDomain();
@@ -107,13 +108,17 @@ public class BasicCrawler extends WebCrawler {
                     
                     
                     //filestorage.insertURLPage(url,text);
-                    pages.add(new AbstractMap.SimpleEntry(url, text));
+                    AbstractMap.SimpleEntry<String,String> test = new AbstractMap.SimpleEntry<String,String>(url, text);
+                    //System.out.println(test.getKey()+" "+test.getValue());
+                    pages.add(test);
                     //commit into DB for every 20 pages
                     if ( pagecount % 20 == 0 ) {
                     	System.out.println("**********Inserting**********************");
                     	filestorage.insertURLPage(pages);
+                    	pages.clear();
                     	System.out.println("**********Insert complete****************");
                     }
+                    
                     
                     
                     String html = htmlParseData.getHtml();
