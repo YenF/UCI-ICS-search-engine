@@ -1,12 +1,18 @@
 package storage.main;
 
+import static java.util.Arrays.asList;
+
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -25,6 +31,7 @@ public class FileStorage {
 	private MongoDatabase db;
 	private MongoCursor<Document> iter;
 	public final static String RAWPAGE_DB_NAME = "cs221_rawpages";
+	public final static String PAGE_COLL_NAME = "URL_Pages";
 	public final static String MONGOLAB_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ds051635.mongolab.com:51635/cs221_rawpages";
 	public final static String ICS_URI = 
@@ -48,12 +55,12 @@ public class FileStorage {
 	 * remove all stored pages in DB. Use it wisely.
 	 */
 	public void reset() {
-		MongoCollection coll = db.getCollection("URL_Pages");
+		MongoCollection coll = db.getCollection(PAGE_COLL_NAME);
 		coll.drop();
 		IndexOptions IndOpt = new IndexOptions();
 		IndOpt.unique(true);
-		db.createCollection("URL_Pages");
-		coll = db.getCollection("URL_Pages");
+		db.createCollection(PAGE_COLL_NAME);
+		coll = db.getCollection(PAGE_COLL_NAME);
 		coll.createIndex ( new Document("URL",1) , IndOpt);
 	}
 	
@@ -66,7 +73,7 @@ public class FileStorage {
    public boolean insertURLPage(String URL, String content) {
 	   //get collection
    try{
-	   db.getCollection("URL_Pages").insertOne( 
+	   db.getCollection(PAGE_COLL_NAME).insertOne( 
    new Document("URL", URL).append("content", content)
 				   );
 	   } catch ( Exception e ) {
@@ -79,7 +86,8 @@ public class FileStorage {
 	* Set iterator of collection "URL_Pages". Use getNextPage() to retrieve page one by one.
 	*/
    public void resetPagesIterator() {
-	   iter = db.getCollection("URL_Pages").find().iterator();
+	   iter = db.getCollection(PAGE_COLL_NAME).find().sort(
+			   new Document("URL",1) ).iterator();
    }
    
    /**
@@ -103,8 +111,30 @@ public class FileStorage {
 	* @return page content in String format
 	*/
    public String getPageByURL(String URL) {
-	   FindIterable<Document> it = db.getCollection("URL_Pages").find( new Document("URL",URL) );
+	   FindIterable<Document> it = db.getCollection(PAGE_COLL_NAME).find( new Document("URL",URL) );
 	   return it.iterator().next().getString("content");
    }
+	
+   // functions below mainly for proj2
+   
+   public int getUniquePageNum() {
+	   AggregateIterable<Document> iterable = db.getCollection(PAGE_COLL_NAME).aggregate(asList(
+		        new Document("count", new Document("$sum", 1))
+		        )
+			   );
 	   
+	   return iterable.first().getInteger("count");
+   }
+   
+   public List<Map.Entry<String, Integer>> getUniqueSubdomainList() {
+	   
+	   return new ArrayList();
+   }
+   
+   public Map.Entry<String, Integer> getLongestPage() {
+	   
+	   return new AbstractMap.SimpleEntry<String, Integer>(null);
+   }
+   
+   
 }
