@@ -42,8 +42,8 @@ public class BasicCrawlController {
                 return;
             }
             
-            FileStorage fs = new FileStorage(FileStorage.MONGOLAB_URI);
-            fs.reset();
+            //FileStorage fs = new FileStorage(FileStorage.MONGOLAB_URI);
+            //fs.reset();
             
           /*
            * crawlStorageFolder is a folder where intermediate crawl data is

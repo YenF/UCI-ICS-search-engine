@@ -45,8 +45,8 @@ public class BasicCrawler extends WebCrawler {
   
         @Override
         public void onStart() {
-             filestorage = new FileStorage (FileStorage.MONGOLAB_URI);
-             tokenstore = new TokenStorage(TokenStorage.MONGOLAB_URI);
+             filestorage = new FileStorage (FileStorage.ICS_URI);
+             //tokenstore = new TokenStorage(TokenStorage.ICS_URI);
              visitStats = new BasicCrawlStats();
              pages = new ArrayList();
         }
