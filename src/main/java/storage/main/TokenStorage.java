@@ -34,7 +34,7 @@ public class TokenStorage {
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
 	public final static String LOCAL_URI = 
-			"mongodb://UCI_Handsomes:UCI_Handsomes@127.0.0.1:8888/"+TOKEN_DB_NAME;
+			"mongodb://127.0.0.1/";
 	//private static final TokenStorage instance = null;
 	//private MongoClient client;
 	private MongoDB DB;

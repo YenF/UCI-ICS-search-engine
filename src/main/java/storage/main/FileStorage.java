@@ -39,10 +39,14 @@ public class FileStorage {
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
 	public final static String LOCAL_URI = 
+<<<<<<< HEAD
 			"mongodb://UCI_Handsomes:UCI_Handsomes@127.0.0.1:8888/"+RAWPAGE_DB_NAME;
 	
 	private List bulkList;
 	
+=======
+			"mongodb://127.0.0.1/";
+>>>>>>> branch 'maven' of https://github.uci.edu/yenfengc/CS221_Proj.git
 	/**
 	 * connect to MONGOLAB_URI, ICS_URI or LOCAL_URI
 	 * @param URI

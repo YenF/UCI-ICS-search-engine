@@ -19,14 +19,5 @@ divide URL into domain & subdomain
 
 
 ##Crawler:
-domain_subdomain
-shouldVisit() 添加：1. 不應訪問同一個page太多次(20次？)    OR
-                                2. 不應訪問同一個page一次以上 
-shouldVisit() 調用intendToVisit() under myCrawlerStats類，傳入url參數，返回boolean
-新添myCrawlerStats類文件 myCrawlerParams類文件 
-
-
-Crawler抓取URL暫時完成了，現在需要storage的代碼部分來存儲信息。
-
 
 
