@@ -81,20 +81,6 @@ public class FileStorage {
 		   return true;
 	}
 	
-	public void BInsertPage(String URL, String content) {
-		bulkList.add( new InsertOneModel( new Document(URL,content) ));
-	}
-	
-	public boolean BInsertPageExecute() {
-		try {
-			db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList);
-			bulkList.clear();
-		} catch(Exception e) {
-			return false;
-		}
-		return true;
-	}
-	
 	/**
 	* Insert an URL page into DB, uniqueness is determined by URL
 	* @param URL
