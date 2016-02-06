@@ -69,6 +69,18 @@ public class FileStorage {
 		coll.createIndex ( new Document("URL",1) , IndOpt);
 	}
 	
+	public boolean insertURLPage(List<Map.Entry<String, String>> pages) {
+		List bulkList = new ArrayList();
+		   for ( int i=0; i<pages.size(); i++ ) {
+			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
+			   bulkList.add( new InsertOneModel( new Document( "URL", pages.get(i).getKey() )
+					   .append("content", pages.get(i).getValue() ) 
+					   ));
+		   }
+		   db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList);
+		   return true;
+	}
+	
 	public void BInsertPage(String URL, String content) {
 		bulkList.add( new InsertOneModel( new Document(URL,content) ));
 	}
@@ -76,6 +88,7 @@ public class FileStorage {
 	public boolean BInsertPageExecute() {
 		try {
 			db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList);
+			bulkList.clear();
 		} catch(Exception e) {
 			return false;
 		}

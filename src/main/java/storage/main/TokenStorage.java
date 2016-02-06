@@ -12,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.InsertOneModel;
 
 import data.Pair.Pair;
 
@@ -78,9 +79,16 @@ public class TokenStorage {
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
 	   public boolean insertToken( List<Pair> p, String URL ) {
+		   
+		   List bulkList = new ArrayList();
 		   for ( int i=0; i<p.size(); i++ ) {
-			   insertToken( p.get(i).getT(), p.get(i).getE(), URL );
+			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
+			   bulkList.add( new InsertOneModel( new Document( "token", p.get(i).getT() )
+					   .append("frequency", p.get(i).getE() ) 
+					   .append("URL", URL)
+					   ));
 		   }
+		   db.getCollection(TOKEN_COLL_NAME).bulkWrite(bulkList);
 		   return true;
 	   }
 	
@@ -157,9 +165,15 @@ public class TokenStorage {
     * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
     */
    public boolean insert3G( List<Pair> p, String URL ) {
+	   List bulkList = new ArrayList();
 	   for ( int i=0; i<p.size(); i++ ) {
-		   insert3G( p.get(i).getT(), p.get(i).getE(), URL );
+		   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
+		   bulkList.add( new InsertOneModel( new Document( "token", p.get(i).getT() )
+				   .append("frequency", p.get(i).getE() ) 
+				   .append("URL", URL)
+				   ));
 	   }
+	   db.getCollection(TGRAM_COLL_NAME).bulkWrite(bulkList);
 	   return true;
    }
    
