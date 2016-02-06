@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.bson.Document;
 
+import com.mongodb.BulkWriteOperation;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.AggregateIterable;
@@ -18,6 +19,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.InsertOneModel;
 
 /**
  * Operation related to URL page could be found here.
@@ -38,12 +40,15 @@ public class FileStorage {
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
 	public final static String LOCAL_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@127.0.0.1:8888/"+RAWPAGE_DB_NAME;
+	
+	private List bulkList;
+	
 	/**
 	 * connect to MONGOLAB_URI, ICS_URI or LOCAL_URI
 	 * @param URI
 	 */
 	public FileStorage( String URI ) {
-		
+		bulkList = new ArrayList();
 	    DB = new MongoDB();
 		DB.init(URI, RAWPAGE_DB_NAME);
 		
@@ -62,6 +67,19 @@ public class FileStorage {
 		db.createCollection(PAGE_COLL_NAME);
 		coll = db.getCollection(PAGE_COLL_NAME);
 		coll.createIndex ( new Document("URL",1) , IndOpt);
+	}
+	
+	public void BInsertPage(String URL, String content) {
+		bulkList.add( new InsertOneModel( new Document(URL,content) ));
+	}
+	
+	public boolean BInsertPageExecute() {
+		try {
+			db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList);
+		} catch(Exception e) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
