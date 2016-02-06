@@ -10,16 +10,7 @@ import java.util.HashSet;
 
 public class BasicCrawlStats {
 
-    private HashSet<String> urlCrawled = new HashSet<String>();
     private HashMap<String, Integer> pagesToCrawl = new HashMap<String, Integer>();
-
-    public HashSet<String> getUrlsCrawled() {
-        return this.urlCrawled;
-    }
-
-    public void addCrawledUrl(String url) {
-        this.urlCrawled.add(url);
-    }
 
     public boolean intendToVisit(String url) throws URISyntaxException {
 
@@ -34,7 +25,6 @@ public class BasicCrawlStats {
         if (count >= 10)
             return false;
 
-        // Update with another intent
         this.pagesToCrawl.put(urlR, count + 1);
 
         return true;
