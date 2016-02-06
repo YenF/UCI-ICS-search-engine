@@ -18,6 +18,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
 
@@ -77,7 +78,8 @@ public class FileStorage {
 					   .append("content", pages.get(i).getValue() ) 
 					   ));
 		   }
-		   db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList);
+		   BulkWriteOptions opt = new BulkWriteOptions();
+		   db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));
 		   return true;
 	}
 	
