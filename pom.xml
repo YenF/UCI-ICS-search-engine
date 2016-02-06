@@ -36,11 +36,11 @@
 		<dependency>
 			<groupId>edu.uci.ics</groupId>
 			<artifactId>crawler4j</artifactId>
-			<version>4.3</version>
-			
+			<version>4.2</version>
+			<!--  
 			<scope>system</scope>
 			<systemPath>${project.basedir}/crawler4j-4.3-SNAPSHOT-jar-with-dependencies.jar</systemPath>
-			
+			-->
 		</dependency>
 
 	</dependencies>
