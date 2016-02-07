@@ -22,8 +22,12 @@ public class tokenGen {
 	public tokenGen(){
 		tokenstore= new TokenStorage(TokenStorage.ICS_URI);
 	}
+	public TokenStorage gettokenstore(){
+		return tokenstore;
+	}
 	public static void main(String[] args) throws Exception {
 	   	tokenGen tokengen = new tokenGen();
+	   	//tokengen.gettokenstore().reset();
 	   	FileStorage fs = new FileStorage(FileStorage.ICS_URI);
 		PrintWriter writer = new PrintWriter("pageURLs.txt");
 		PrintWriter uniwriter = new PrintWriter("uniqueSubdomain.txt");
@@ -36,6 +40,8 @@ public class tokenGen {
     	while ( page!=null ) {
     		totalPages++;
     		writer.println(page.getKey());
+    		System.out.println("The following is the document content:");
+    		System.out.println(page.getValue());
     		tokengen.tokenAnd3gram(page.getValue(),page.getKey());
     		String[] arry = page.getKey().split("//|\\s+|\\n+|\\.");
     		if(!hashset.contains(arry[1])){
@@ -67,6 +73,7 @@ public class tokenGen {
 		}
 		Pair[] pair3g = TextProcessor.computeThreeGramFrequencies(list);
 		List<Pair> list3g = new ArrayList<Pair>(Arrays.asList(pair3g));
+		System.out.printf("list3g's size is %d\n", list3g.size());
 		if(!tokenstore.insert3G(list3g, URL)){
 			System.out.println("Insert 3g list fail: "+URL);
 			result = -1;

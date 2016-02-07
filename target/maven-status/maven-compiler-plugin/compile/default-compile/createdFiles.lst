@@ -4,6 +4,7 @@ storage\main\MongoDB.class
 crawl\BasicCrawler.class
 data\Pair\PairE.class
 data\text_processing\TextProcessor.class
+data\Token.class
 data\IRUtilities\Porter.class
 crawl\BasicCrawlStats.class
 storage\main\FileStorage.class
