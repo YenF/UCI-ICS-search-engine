@@ -21,10 +21,10 @@ public class Hello
 		if(args[1].equals("C")) TextProcessor.print3g(TextProcessor.computeThreeGramFrequencies(list));
 		if(args[1].equals("D")) TextProcessor.printAna(TextProcessor.detecAnagrams(list));
 		
-		String teststr = "the book is so awesome\n\n\n\n\ntest\n\n\n\nfor\nnewline";
+		String teststr = "http://luci.ics.uci.edu/blog/?tag=contest";
 	    List<String> list1 = TextProcessor.tokenizeFile(teststr);
 	    TextProcessor.print(TextProcessor.computeWordFrequencies(list1));
-		String[] arry = teststr.split("\\s+|\\n+");
+		String[] arry = teststr.split("//|\\s+|\\n+|\\.");
 		for(String tempstr:arry){
 			System.out.println(tempstr);
 		}

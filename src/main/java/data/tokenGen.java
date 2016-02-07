@@ -12,6 +12,7 @@ import java.util.*;
 import data.IRUtilities.*;
 import data.Pair.*;
 import java.sql.*;
+import java.io.*;
 import storage.main.*;
 /**
  * Created by Frank on 16/1/26.
@@ -19,7 +20,41 @@ import storage.main.*;
 public class tokenGen {
 	private  TokenStorage tokenstore;
 	public tokenGen(){
-		tokenstore= new TokenStorage(TokenStorage.MONGOLAB_URI);
+		tokenstore= new TokenStorage(TokenStorage.ICS_URI);
+	}
+	public static void main(String[] args) throws Exception {
+	   	tokenGen tokengen = new tokenGen();
+	   	FileStorage fs = new FileStorage(FileStorage.ICS_URI);
+		PrintWriter writer = new PrintWriter("pageURLs.txt");
+		PrintWriter uniwriter = new PrintWriter("uniqueSubdomain.txt");
+		HashSet<String> hashset = new HashSet<String>();
+    	int totalPages = 0;  
+    	System.out.println("---testing getPage---");
+    	fs.resetPagesIterator();
+    	Map.Entry<String,String> page = fs.getNextPage();
+    	System.out.println("---printing out page URL---");
+    	while ( page!=null ) {
+    		totalPages++;
+    		writer.println(page.getKey());
+    		tokengen.tokenAnd3gram(page.getValue(),page.getKey());
+    		String[] arry = page.getKey().split("//|\\s+|\\n+|\\.");
+    		if(!hashset.contains(arry[1])){
+    			hashset.add(arry[1]);
+    			System.out.printf("subdomain is %s\n", arry[1]);
+    		}
+    		//System.out.println("Page URL: " + page.getKey());
+    		page = fs.getNextPage();
+    	}
+    	hashset.remove("www");
+    	Iterator<String> ite = hashset.iterator();
+    	int unicount = 0;
+    	while(ite.hasNext()){
+    		uniwriter.printf("%d: %s\n",++unicount,ite.next());
+    	}
+    	uniwriter.close();
+    	writer.println("Total Pages: "+totalPages);
+    	writer.close();
+    	System.out.println("---getPage() function test complete---");
 	}
 	public int tokenAnd3gram(String input, String URL){
 		int result = 0;
