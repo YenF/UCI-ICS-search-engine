@@ -11,6 +11,7 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
 
@@ -88,7 +89,8 @@ public class TokenStorage {
 					   .append("URL", URL)
 					   ));
 		   }
-		   db.getCollection(TOKEN_COLL_NAME).bulkWrite(bulkList);
+		   BulkWriteOptions opt = new BulkWriteOptions();
+		   db.getCollection(TOKEN_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));
 		   return true;
 	   }
 	
@@ -173,7 +175,8 @@ public class TokenStorage {
 				   .append("URL", URL)
 				   ));
 	   }
-	   db.getCollection(TGRAM_COLL_NAME).bulkWrite(bulkList);
+	   BulkWriteOptions opt = new BulkWriteOptions();
+	   db.getCollection(TGRAM_COLL_NAME).bulkWrite(bulkList, opt.ordered(false) );
 	   return true;
    }
    

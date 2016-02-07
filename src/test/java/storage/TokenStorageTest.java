@@ -64,13 +64,22 @@ private static TokenStorage ts;
 		System.out.println("---Complete Testing getHighestFreq_Token()---");
 	}
 	
-	@Ignore
+	
 	@Test
 	public void insert3GTest() {
 		System.out.println("---Testing insert3G()---");
 		for ( int i=1; i<=10; i++) {
 	    	ts.insert3G("hi"+i+"hi"+(i+1)+"hi"+(i+2), i, "TESTURL"+i);
     	}
+		List l = new ArrayList();
+		for ( int i=11; i<=20; i++) {
+	    	l.add( new Pair("hi"+i+"hi"+(i+1)+"hi"+(i+2),i) );
+    	}
+		try {
+			ts.insert3G(l, "TESTURLBULK");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		System.out.println("---Complete Testing insert3G()---");
 	}
 	
