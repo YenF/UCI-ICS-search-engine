@@ -80,7 +80,7 @@ public class TokenStorage {
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
 	   public boolean insertToken( List<Pair> p, String URL ) {
-		   
+		   if ( p.isEmpty() ) return true;	//if no element in list, just return
 		   List bulkList = new ArrayList();
 		   for ( int i=0; i<p.size(); i++ ) {
 			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
@@ -167,6 +167,7 @@ public class TokenStorage {
     * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
     */
    public boolean insert3G( List<Pair> p, String URL ) {
+	   if ( p.isEmpty() ) return true;	//if no element in list, just return
 	   List bulkList = new ArrayList();
 	   for ( int i=0; i<p.size(); i++ ) {
 		   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );

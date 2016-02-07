@@ -73,10 +73,11 @@ private static TokenStorage ts;
     	}
 		List l = new ArrayList();
 		for ( int i=11; i<=20; i++) {
-	    	l.add( new Pair("hi"+i+"hi"+(i+1)+"hi"+(i+2),i) );
+	    	//l.add( new Pair("hi"+i+"hi"+(i+1)+"hi"+(i+2),i) );
     	}
 		try {
-			ts.insert3G(l, "TESTURLBULK");
+			//if ( !l.isEmpty() )
+				ts.insert3G(l, "TESTURLBULK");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

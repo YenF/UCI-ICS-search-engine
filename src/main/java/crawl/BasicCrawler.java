@@ -45,7 +45,7 @@ public class BasicCrawler extends WebCrawler {
   
         @Override
         public void onStart() {
-             filestorage = new FileStorage (FileStorage.MONGOLAB_URI);
+             filestorage = new FileStorage (FileStorage.LOCAL_URI);
              //tokenstore = new TokenStorage(TokenStorage.ICS_URI);
              visitStats = new BasicCrawlStats();
              pages = new ArrayList();
@@ -143,7 +143,8 @@ public class BasicCrawler extends WebCrawler {
     	    // Do nothing by default
     	    // Sub-classed can override this to add their custom functionality
     	  System.out.println("**********Final Inserting****************");
-    	  filestorage.insertURLPage(pages);
+    	  if ( !pages.isEmpty() )
+    		  filestorage.insertURLPage(pages);
     	  pages.clear();
     	  System.out.println("**********Insert Complete****************");
       }
