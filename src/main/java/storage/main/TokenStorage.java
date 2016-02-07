@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bson.Document;
 
 import com.mongodb.Block;
+import com.mongodb.MongoBulkWriteException;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -90,7 +91,14 @@ public class TokenStorage {
 					   ));
 		   }
 		   BulkWriteOptions opt = new BulkWriteOptions();
-		   db.getCollection(TOKEN_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));
+		   try {
+			   db.getCollection(TOKEN_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));
+		   } catch ( MongoBulkWriteException e ) {
+			   System.out.println(e.getMessage());
+		   } catch ( Exception e ) {
+			   System.out.println(e.getMessage());
+			   return false;
+		   }
 		   return true;
 	   }
 	
@@ -177,7 +185,14 @@ public class TokenStorage {
 				   ));
 	   }
 	   BulkWriteOptions opt = new BulkWriteOptions();
-	   db.getCollection(TGRAM_COLL_NAME).bulkWrite(bulkList, opt.ordered(false) );
+	   try {
+		   db.getCollection(TGRAM_COLL_NAME).bulkWrite(bulkList, opt.ordered(false) );
+	   } catch ( MongoBulkWriteException e ) {
+		   System.out.println(e.getMessage());
+	   } catch ( Exception e ) {
+		   System.out.println(e.getMessage());
+		   return false;
+	   }
 	   return true;
    }
    

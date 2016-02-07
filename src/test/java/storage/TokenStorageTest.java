@@ -9,6 +9,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.mongodb.BulkWriteException;
+import com.mongodb.DuplicateKeyException;
+import com.mongodb.MongoBulkWriteException;
+import com.mongodb.MongoException;
+
 import data.Pair.Pair;
 import storage.main.TokenStorage;
 
@@ -26,7 +31,7 @@ private static TokenStorage ts;
 	/**
 	 * import some data, couldn't use everytime
 	 */
-	//@Ignore
+	@Ignore
 	@Test
 	public void insertTokenTest() {
 		System.out.println("---Testing insertToken()---");
@@ -74,12 +79,19 @@ private static TokenStorage ts;
 		List l = new ArrayList();
 		for ( int i=11; i<=20; i++) {
 	    	//l.add( new Pair("hi"+i+"hi"+(i+1)+"hi"+(i+2),i) );
+			l.add( new Pair("hi",1) );	//test duplicate
     	}
 		try {
 			//if ( !l.isEmpty() )
 				ts.insert3G(l, "TESTURLBULK");
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (DuplicateKeyException e) {
+			System.out.println(e.getMessage());
+			
+		} catch (MongoBulkWriteException e) {
+			System.out.println(e.getMessage());
+		} catch ( MongoException e ) {
+			System.out.println(e.getMessage());
+			assertTrue(false);
 		}
 		System.out.println("---Complete Testing insert3G()---");
 	}
