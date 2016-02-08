@@ -17,6 +17,10 @@ public class BasicCrawlStats {
         String urlR = url.substring(0, url.lastIndexOf("?"));
         String str = "calendar";
 
+        if (urlR.length() > 512){
+            return false;
+        }
+
         if (urlR.toLowerCase().contains(str)){
             return false;
         }
