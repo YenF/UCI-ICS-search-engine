@@ -14,9 +14,20 @@ public class BasicCrawlStats {
 
     public boolean intendToVisit(String url) throws URISyntaxException {
 
-        String urlR = URLhelper.removeQuery(url);
-        if (urlR == null)
-            return true;
+        String urlR = url.substring(0, url.lastIndexOf("?"));
+        String str = "calendar";
+
+        if (urlR.length() > 512){
+            return false;
+        }
+
+        if (urlR.toLowerCase().contains(str)){
+            return false;
+        }
+
+        /**
+         * if (urlR == null) { return true; }
+         */
 
         int count = 1;
         if (this.pagesToCrawl.containsKey(urlR))
