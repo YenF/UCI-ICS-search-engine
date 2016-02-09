@@ -150,14 +150,14 @@ public class TokenStorage {
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
 	   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
 			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency"))),
-				new Document( "$limit", num ),
-				new Document( "$sort", new Document( "count", -1 ) )
-		        ));
+				new Document( "$sort", new Document( "count", -1 ) ),
+				new Document( "$limit", num )
+		        )).allowDiskUse(true);
 	   iterable.forEach(new Block<Document>() {
 		    public void apply(final Document document) {
 		    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
 		    	//HashMap<String, Integer> tmpHash = new HashMap<String, Integer>();
-		    	
+		    	//System.out.println(document.getString("_id"));
 		    	ans.add( new AbstractMap.SimpleEntry<String, Integer>
 		    		( document.getString("_id"), document.getInteger("count") ) 
 		    			);
@@ -229,25 +229,26 @@ public class TokenStorage {
    
    /**
     * List highest frequency ranks of 3-grams. If num=10, list top 10 of 3-grams.
+    * Need map reduce function to threeGramFreq collection
     * @param num
-    * @return 
+    * @return List of (token, frequency) 
     */
    public List<Map.Entry<String,Integer>> getHighestFreq_3G( int num ) {
 	 //final?...
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
-	   AggregateIterable<Document> iterable = db.getCollection(TGRAM_COLL_NAME).aggregate(asList(
-			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency"))),
-			   new Document( "$limit", num ),
-			   new Document( "$sort", new Document( "count", -1 ) )
+	   AggregateIterable<Document> iterable = db.getCollection("threeGramFreq").aggregate(asList(
+			   new Document("$group", new Document("_id", "$_id").append("count", new Document("$sum", "$value"))),
+			   new Document( "$sort", new Document( "count", -1 ) ),
+			   new Document( "$limit", num )
 		        )
-			   );
+			   ).allowDiskUse(true);
 	   iterable.forEach(new Block<Document>() {
 		    public void apply(final Document document) {
 		    	//Map.Entry<String, Integer> tmp = new AbstractMap.SimpleEntry<String, Integer>();
 		    	//HashMap<String, Integer> tmpHash = new HashMap<String, Integer>();
-		    	
+		    	//System.out.println(document.getString("_id"));
 		    	ans.add( new AbstractMap.SimpleEntry<String, Integer>
-		    		( document.getString("_id"), document.getInteger("count") ) 
+		    		( document.getString("_id"), document.getDouble("count").intValue() ) 
 		    			);
 		    }
 		});
