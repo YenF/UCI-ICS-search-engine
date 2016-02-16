@@ -31,7 +31,7 @@ private static TokenStorage ts;
 	/**
 	 * import some data, couldn't use everytime
 	 */
-	//@Ignore
+	@Ignore
 	@Test
 	public void insertTokenTest() {
 		System.out.println("---Testing insertToken()---");
@@ -68,11 +68,11 @@ private static TokenStorage ts;
 		System.out.println("---Complete Testing getTokenFreq()---");
 	}
 	
-	@Ignore
+	//@Ignore
 	@Test
 	public void getHighestFreq_TokenTest() {
 		System.out.println("---Testing getHighestFreq_Token()---");
-		System.out.println( ts.getHighestFreq_Token(10) );
+		System.out.println( ts.getHighestFreq_Token(3) );
 		System.out.println("---Complete Testing getHighestFreq_Token()---");
 	}
 	

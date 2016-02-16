@@ -197,15 +197,16 @@ public class TokenStorage {
    }
    
    /**
-    * List highest frequency ranks of tokens. If num=10, list top 10 of tokens.
+    * List highest frequency ranks of tokens & 3G. If num=10, list top 10 of tokens.
     * @param num
     * @return
     */
-   public List<Map.Entry<String,Integer>> getHighestFreq_Token( int num ) {
+   public List<Map.Entry<String,Integer>> getHighestFreq_Token( int num, String mode ) {
 	   //final?...
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
-	   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
-			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$frequency"))),
+	   AggregateIterable<Document> iterable = db.getCollection(mode).aggregate(asList(
+			   new Document("$unwind", "$URLs"),
+			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$URLs.frequency"))),
 				new Document( "$sort", new Document( "count", -1 ) ),
 				new Document( "$limit", num )
 		        )).allowDiskUse(true);
