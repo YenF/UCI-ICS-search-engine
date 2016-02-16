@@ -24,27 +24,33 @@ private static TokenStorage ts;
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
 		ts = new TokenStorage(TokenStorage.MONGOLAB_URI);
-		ts.reset();
+		//ts.reset();
 		//Thread.sleep(1000);
 	}
 	
 	/**
 	 * import some data, couldn't use everytime
 	 */
-	@Ignore
+	//@Ignore
 	@Test
 	public void insertTokenTest() {
 		System.out.println("---Testing insertToken()---");
+		/*
 		for ( int i=1; i<=10; i++) {
-	    	ts.insertToken("hi"+i, i, "TESTURL"+i);
+	    	ts.insertToken("hi"+i, i, "TESTURL"+i, ts.TOKEN_COLL_NAME);
     	}
+    	*/
 		System.out.println("---Testing BULK insertToken()---");
 		List l = new ArrayList();
+		List pos = new ArrayList();
 		for ( int i=11; i<=20; i++) {
-	    	l.add( new Pair("hi"+i,i) );
+	    	l.add( new Pair("hi11",i) );
+	    	l.add( new Pair("hi12",i) );
+	    	l.add( new Pair("hi13",i) );
+	    	pos.add(i);
     	}
 		try {
-			ts.insertToken(l, "TESTURLBULK");
+			ts.insertToken(l, "TESTURLBULK", pos, ts.TOKEN_COLL_NAME);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,6 +68,7 @@ private static TokenStorage ts;
 		System.out.println("---Complete Testing getTokenFreq()---");
 	}
 	
+	@Ignore
 	@Test
 	public void getHighestFreq_TokenTest() {
 		System.out.println("---Testing getHighestFreq_Token()---");
@@ -69,7 +76,8 @@ private static TokenStorage ts;
 		System.out.println("---Complete Testing getHighestFreq_Token()---");
 	}
 	
-	
+	/*
+	@Ignore
 	@Test
 	public void insert3GTest() {
 		System.out.println("---Testing insert3G()---");
@@ -95,6 +103,7 @@ private static TokenStorage ts;
 		}
 		System.out.println("---Complete Testing insert3G()---");
 	}
+	*/
 	
 	@Ignore
 	@Test
@@ -107,7 +116,7 @@ private static TokenStorage ts;
 		System.out.println("---Complete Testing get3GFreq()---");
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
 	public void getHighestFreq_3GTest() {
 		System.out.println("---Testing getHighestFreq_3G()---");

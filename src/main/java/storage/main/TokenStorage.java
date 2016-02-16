@@ -15,6 +15,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
+import com.mongodb.client.model.UpdateOneModel;
+import com.mongodb.client.model.UpdateOptions;
 
 import data.Pair.Pair;
 
@@ -32,6 +34,7 @@ public class TokenStorage {
 	public final static String TOKEN_COLL_NAME = "tokens";
 	public final static String TGRAM_COLL_NAME = "threeGrams";
 	public final static String TOKEN_DB_NAME = "cs221_tokens";
+	public final static String PAGE_COLL_NAME = "URL_Pages";
 	public final static String MONGOLAB_URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds055535.mongolab.com:55535/cs221_tokens";
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
@@ -40,7 +43,7 @@ public class TokenStorage {
 	//private static final TokenStorage instance = null;
 	//private MongoClient client;
 	private MongoDB DB;
-	private MongoDatabase db;
+	private MongoDatabase db, dbPages;
 	private MongoCursor<Document> iter;
 	
 	/**
@@ -53,6 +56,7 @@ public class TokenStorage {
 		
 	       // Now connect to your databases
 	    db = DB.db;
+	    dbPages = DB.dbPages;
 	    //System.out.println("---MongoDB initialized---");
 	}
 	
@@ -75,24 +79,31 @@ public class TokenStorage {
 	}
 	
 	/**
-	    * Insert token into DB.
+	    * Insert token or tgram into DB.
 	    * @param p 
 	    * @param URL
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
-	   public boolean insertToken( List<Pair> p, String URL ) {
+	   public boolean insertToken( List<Pair> p, String URL, List<Integer> position, 
+			   String mode ) {
+		   //mode will be "TOKEN_COLL_NAME" or "TGRAM_COLL_NAME"
 		   if ( p.isEmpty() ) return true;	//if no element in list, just return
 		   List bulkList = new ArrayList();
 		   for ( int i=0; i<p.size(); i++ ) {
 			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
-			   bulkList.add( new InsertOneModel( new Document( "token", p.get(i).getT() )
-					   .append("frequency", p.get(i).getE() ) 
-					   .append("URL", URL)
-					   ));
+			   bulkList.add( new UpdateOneModel( new Document( "token", p.get(i).getT() ),
+					   new Document( "$push", new Document( "URLs", 
+							   new Document("frequency", p.get(i).getE())
+							   		.append("URL", URL)
+							   		.append("position", position)  
+							   		) 
+							   ), new UpdateOptions().upsert(true)
+					   )	//UpdateOneModel
+				);
 		   }
 		   BulkWriteOptions opt = new BulkWriteOptions();
 		   try {
-			   db.getCollection(TOKEN_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));
+			   db.getCollection(mode).bulkWrite(bulkList, opt.ordered(false));
 		   } catch ( MongoBulkWriteException e ) {
 			   System.out.println(e.getMessage());
 		   } catch ( Exception e ) {
@@ -102,6 +113,50 @@ public class TokenStorage {
 		   return true;
 	   }
 	
+	   public boolean computeTFIDF(String tokenCollName, String pageCollName) {
+		   //tokenCollName: for retrieving tokens
+		   //pageCollName: for total document number, in different db
+		   List<Document> iter = db.getCollection(tokenCollName).find().into(new ArrayList<Document>());
+		   long totalDocuments = dbPages.getCollection(pageCollName).count();
+		   int countDoc=1;
+		   List bulkList = new ArrayList();
+		   
+		   for ( Document token : iter ) {
+			   List<Document> URLs = (List<Document>) token.get("URLs");
+			   if ( URLs != null ) {
+				   countDoc++;
+				   bulkList.add(
+					   new UpdateOneModel(
+						   new Document( "token", token.getString("token") ),
+						   new Document( "$set", 
+							   new Document( "DF", URLs.size() )
+							   .append( "IDF", Math.log10( totalDocuments/URLs.size() ) )
+						   )
+						)
+					);
+			   }
+			   //BulkWriteOptions opt = new BulkWriteOptions();
+			   if ( countDoc % 10000 == 0 ) {
+				   try {
+					   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
+				   } catch ( Exception e ) {
+					   e.printStackTrace();
+				   }
+				   bulkList.clear();
+				   countDoc=1;
+			   }
+		   }
+		   if ( !bulkList.isEmpty() ) { 
+			   try {
+				   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
+			   } catch ( Exception e ) {
+				   e.printStackTrace();
+			   }
+		   }
+		   return true;
+	   }
+	   
+	   
 	/**
     * Insert token into DB. 
     * @param token
@@ -109,6 +164,7 @@ public class TokenStorage {
     * @param URL
     * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
     */
+	   /*
    public boolean insertToken( String token, int frequency, String URL ) {
 	   try{
 		   db.getCollection(TOKEN_COLL_NAME).insertOne( 
@@ -174,6 +230,7 @@ public class TokenStorage {
     * @param URL
     * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
     */
+   /*
    public boolean insert3G( List<Pair> p, String URL ) {
 	   if ( p.isEmpty() ) return true;	//if no element in list, just return
 	   List bulkList = new ArrayList();
@@ -203,6 +260,7 @@ public class TokenStorage {
     * @param URL
     * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
     */
+   /*
    public boolean insert3G( String token, int frequency, String URL ) {
 	   try{
 		   db.getCollection(TGRAM_COLL_NAME).insertOne( 
