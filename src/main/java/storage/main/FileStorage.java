@@ -21,6 +21,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
+import com.mongodb.client.model.UpdateOneModel;
+import com.mongodb.client.model.UpdateOptions;
 
 /**
  * Operation related to URL page could be found here.
@@ -70,13 +72,21 @@ public class FileStorage {
 		coll.createIndex ( new Document("URL",1) , IndOpt);
 	}
 	
-	public boolean insertURLPage(List<Map.Entry<String, String>> pages) {
+	public boolean insertURLPage(List<Map.Entry<String, String>> pages, List<String> titles, 
+			List<Map<String,String>> metaTags) {
 		List bulkList = new ArrayList();
 		   for ( int i=0; i<pages.size(); i++ ) {
 			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
-			   bulkList.add( new InsertOneModel( new Document( "URL", pages.get(i).getKey() )
-					   .append("content", pages.get(i).getValue() ) 
-					   ));
+			   bulkList.add( new UpdateOneModel( new Document( "URL", pages.get(i).getKey() ),
+					   new Document("$set", 
+							   new Document( "URL", pages.get(i).getKey() )
+							   .append( "title", titles.get(i) )
+							   .append( "content", pages.get(i).getValue() )
+							   .append( "metaTags", metaTags.get(i) )
+						)	//$set
+					   , new UpdateOptions().upsert(true)
+					  )	//UpdateOneModel
+				);
 		   }
 		   BulkWriteOptions opt = new BulkWriteOptions();
 		   db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));

@@ -13,18 +13,20 @@ public class BasicCrawlStats {
     private HashMap<String, Integer> pagesToCrawl = new HashMap<String, Integer>();
 
     public boolean intendToVisit(String url) throws URISyntaxException {
-
-        String urlR = url.substring(0, url.lastIndexOf("?"));
+    	String urlR;
+    	if ( url.lastIndexOf("?")!=-1 ) {
+    		urlR = url.substring(0, url.lastIndexOf("?"));
+    	} else urlR = url;
         String str = "calendar";
 
         if (urlR.length() > 512){
             return false;
         }
-
+/*
         if (urlR.toLowerCase().contains(str)){
             return false;
         }
-
+*/
         /**
          * if (urlR == null) { return true; }
          */

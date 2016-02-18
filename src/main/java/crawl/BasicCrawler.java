@@ -42,6 +42,8 @@ public class BasicCrawler extends WebCrawler {
         private TokenStorage tokenstore;
         private BasicCrawlStats visitStats;
         private List<Map.Entry<String, String>> pages;
+        private List<String> titleList;
+        private List<Map<String, String>> metaTagList;
   
         @Override
         public void onStart() {
@@ -49,6 +51,8 @@ public class BasicCrawler extends WebCrawler {
              //tokenstore = new TokenStorage(TokenStorage.ICS_URI);
              visitStats = new BasicCrawlStats();
              pages = new ArrayList();
+             titleList = new ArrayList<String>();
+             metaTagList = new ArrayList<Map<String,String>>();
         }
   
         /**
@@ -63,9 +67,9 @@ public class BasicCrawler extends WebCrawler {
                 return false;
               }
               // Don't crawl the same pages too many times
-              
+            
               try {
-                  if (!visitStats.intendToVisit(url.getURL())){
+                  if ( !visitStats.intendToVisit( url.getURL() ) ){
                     return false;
                   }
               } catch (URISyntaxException e) {
@@ -105,21 +109,25 @@ public class BasicCrawler extends WebCrawler {
 
                     HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
                     String text = htmlParseData.getText();
-                    
+                    String title = htmlParseData.getTitle();
+                    Map<String,String> metaTags = htmlParseData.getMetaTags();
                     
                     //filestorage.insertURLPage(url,text);
-                    AbstractMap.SimpleEntry<String,String> test = new AbstractMap.SimpleEntry<String,String>(url, text);
+                    AbstractMap.SimpleEntry<String,String> test = 
+                    		new AbstractMap.SimpleEntry<String,String>(url, text);
                     //System.out.println(test.getKey()+" "+test.getValue());
                     pages.add(test);
+                    titleList.add(title);
+                    metaTagList.add(metaTags);
                     //commit into DB for every 20 pages
                     if ( pagecount % 500 == 0 ) {
                     	System.out.println("**********Inserting**********************");
-                    	filestorage.insertURLPage(pages);
+                    	filestorage.insertURLPage(pages, titleList, metaTagList);
                     	pages.clear();
+                    	titleList.clear();
+                    	metaTagList.clear();
                     	System.out.println("**********Insert complete****************");
                     }
-                    
-                    
                     
                     String html = htmlParseData.getHtml();
                     Set<WebURL> links = htmlParseData.getOutgoingUrls();
@@ -144,8 +152,10 @@ public class BasicCrawler extends WebCrawler {
     	    // Sub-classed can override this to add their custom functionality
     	  System.out.println("**********Final Inserting****************");
     	  if ( !pages.isEmpty() )
-    		  filestorage.insertURLPage(pages);
+    		  filestorage.insertURLPage(pages, titleList, metaTagList);
     	  pages.clear();
+    	  titleList.clear();
+      	  metaTagList.clear();
     	  System.out.println("**********Insert Complete****************");
       }
 }
