@@ -135,13 +135,23 @@ public class FileStorage {
 	* If return null, means no more element.
 	* @return Map.Entry of (URL, text)
 	*/
-   public Map.Entry<String,String> getNextPage() {
-	   HashMap<String, String> tmp = null;
+   public Map.Entry< List<String>, List< Map<String,String> > > getNextPage() {
+	   HashMap<List<String>, List< Map<String,String> > > tmp = null;
 	   if ( !iter.hasNext() ) return null;
 	   Document tmpDoc = iter.next();
-	   tmp = new HashMap<String,String>();
-	   tmp.put( tmpDoc.getString("URL"), tmpDoc.getString("content") );
-	   Map.Entry<String, String> ret = tmp.entrySet().iterator().next();
+	   List<String> tmpList = new ArrayList<String>();
+	   List< Map<String,String> > tmpMeta = new ArrayList<Map<String,String>>();
+	   tmpList.add(tmpDoc.getString("URL"));
+	   tmpList.add(tmpDoc.getString("content"));
+	   tmpList.add(tmpDoc.getString("title"));
+	   tmpList.add(tmpDoc.getString("anchor"));
+	   
+	   //tmpMeta.add( (Map<String, String>) ( (Document)tmpDoc.get("metaTags") ).get );
+	   
+	   tmp = new HashMap<List<String>, List< Map<String,String> > >();
+	   //tmp.put( tmpDoc.getString("URL"), tmpDoc.getString("content") );
+	   tmp.put( tmpList, tmpMeta );
+	   Map.Entry<List<String>, List< Map<String,String> > > ret = tmp.entrySet().iterator().next();
 	   return ret;
    }
    

@@ -24,11 +24,11 @@ public class FileStorageTest {
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
 		fs = new FileStorage(FileStorage.ICS_URI);
-		fs.reset();
+		//fs.reset();
 		//Thread.sleep(1000);
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
     public void testConnetivity()
     {
@@ -57,7 +57,7 @@ public class FileStorageTest {
 		System.out.println("---Complete Testing insertPage()---");
 	}
 	
-    @Ignore
+    //@Ignore
     @Test
     public void testGetPage() throws FileNotFoundException
     {
@@ -66,11 +66,13 @@ public class FileStorageTest {
     	
     	System.out.println("---testing getPage---");
     	fs.resetPagesIterator();
-    	Map.Entry<String,String> page = fs.getNextPage();
+    	Map.Entry<List<String>, List< Map<String,String> > > page = fs.getNextPage();
     	System.out.println("---printing out page URL---");
-    	while ( page!=null ) {
+    	while ( page!=null && totalPages<10 ) {
     		totalPages++;
     		writer.println(page.getKey());
+    		//writer.println(page.getValue());
+    		writer.println("*******");
     		//System.out.println("Page URL: " + page.getKey());
     		page = fs.getNextPage();
     	}
@@ -80,7 +82,7 @@ public class FileStorageTest {
     	
         assertTrue(true);
     }
-    
+    /*
     @Ignore
     @Test
     public void testGetPageByURL() {
@@ -93,5 +95,6 @@ public class FileStorageTest {
     	System.out.println("---getPageByURL() function test complete---");
         assertTrue(true);
     }
+    */
 
 }
