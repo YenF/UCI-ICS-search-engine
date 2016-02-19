@@ -50,7 +50,8 @@ public class BasicCrawlController {
            * stored.
            */
         String crawlStorageFolder = args[0];
-
+        
+        
           /*
            * numberOfCrawlers shows the number of concurrent threads that should
            * be initiated for crawling.

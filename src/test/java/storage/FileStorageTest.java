@@ -24,12 +24,12 @@ public class FileStorageTest {
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
 		fs = new FileStorage(FileStorage.ICS_URI);
-		//fs.reset();
+		fs.reset();
 		//Thread.sleep(1000);
 	}
 	
-	@Ignore
-	//@Test
+	//@Ignore
+	@Test
     public void testConnetivity()
     {
     	System.out.println("---testing connectivity...---");
@@ -50,14 +50,14 @@ public class FileStorageTest {
 	    	l.add( new AbstractMap.SimpleEntry<String, String>("TESTURL"+i, "hi"+i) );
     	}
 		try {
-			fs.insertURLPage(l);
+			//fs.insertURLPage(l);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		System.out.println("---Complete Testing insertPage()---");
 	}
 	
-    //@Ignore
+    @Ignore
     @Test
     public void testGetPage() throws FileNotFoundException
     {

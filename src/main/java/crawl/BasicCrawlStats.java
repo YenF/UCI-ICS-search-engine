@@ -1,5 +1,7 @@
 package crawl;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +13,11 @@ import java.util.HashSet;
 public class BasicCrawlStats {
 
     private HashMap<String, Integer> pagesToCrawl = new HashMap<String, Integer>();
+    private PrintWriter writer;
+    
+    BasicCrawlStats() throws FileNotFoundException {
+    	writer = new PrintWriter("crawledData/statsLog.txt");
+    }
 
     public boolean intendToVisit(String url) throws URISyntaxException {
     	String urlR;
@@ -19,7 +26,9 @@ public class BasicCrawlStats {
     	} else urlR = url;
         String str = "calendar";
 
-        if (urlR.length() > 512){
+        if (urlR.length() > 300) {
+        	writer.println("***Found extremely long URL***");
+        	writer.println(urlR);
             return false;
         }
 /*
@@ -30,15 +39,20 @@ public class BasicCrawlStats {
         /**
          * if (urlR == null) { return true; }
          */
-
-        int count = 1;
-        if (this.pagesToCrawl.containsKey(urlR))
-            count = this.pagesToCrawl.get(urlR);
-
-        if (count >= 10)
-            return false;
-
-        this.pagesToCrawl.put(urlR, count + 1);
+        
+        try {
+	        int count = 1;
+	        if (this.pagesToCrawl.containsKey(urlR))
+	            count = this.pagesToCrawl.get(urlR);
+	
+	        if (count >= 10)
+	            return false;
+	
+	        this.pagesToCrawl.put(urlR, count + 1);
+        } catch ( OutOfMemoryError e ) {
+        	writer.println("***Out of memory, clear pagesToCrawl hashMap***");
+        	pagesToCrawl.clear();
+        }
 
         return true;
     }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
+import org.slf4j.LoggerFactory;
 
 import com.mongodb.BulkWriteOperation;
 import com.mongodb.MongoClient;
@@ -23,6 +24,11 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.UpdateOneModel;
 import com.mongodb.client.model.UpdateOptions;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
+
 
 /**
  * Operation related to URL page could be found here.
@@ -45,6 +51,7 @@ public class FileStorage {
 			"mongodb://UCI_Handsomes:UCI_Handsomes@127.0.0.1:8888/"+RAWPAGE_DB_NAME;
 	
 	private List bulkList;
+	private Logger mongoLogger;
 	
 	/**
 	 * connect to MONGOLAB_URI, ICS_URI or LOCAL_URI
@@ -55,6 +62,9 @@ public class FileStorage {
 	    DB = new MongoDB();
 		DB.init(URI, RAWPAGE_DB_NAME);
 		
+		//change logger property
+		mongoLogger = (Logger) LoggerFactory.getLogger( "org.mongodb.driver" );
+	    mongoLogger.setLevel(Level.WARN);
 	       // Now connect to your databases
 	    db = DB.db;
 	}
@@ -72,7 +82,7 @@ public class FileStorage {
 		coll.createIndex ( new Document("URL",1) , IndOpt);
 	}
 	
-	public boolean insertURLPage(List<Map.Entry<String, String>> pages, List<String> titles, 
+	public boolean insertURLPage(List<Map.Entry<String, String>> pages, List<String> titles, List<String> anchors, 
 			List<Map<String,String>> metaTags) {
 		List bulkList = new ArrayList();
 		   for ( int i=0; i<pages.size(); i++ ) {
@@ -81,6 +91,7 @@ public class FileStorage {
 					   new Document("$set", 
 							   new Document( "URL", pages.get(i).getKey() )
 							   .append( "title", titles.get(i) )
+							   .append( "anchor", anchors.get(i) )
 							   .append( "content", pages.get(i).getValue() )
 							   .append( "metaTags", metaTags.get(i) )
 						)	//$set

@@ -84,7 +84,7 @@ public class TokenStorage {
 	    * @param URL
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
-	   public boolean insertToken( List<Pair> p, String URL, List<Integer> position, 
+	   public boolean insertToken( List<Pair> p, String URL, 
 			   String mode ) {
 		   //mode will be "TOKEN_COLL_NAME" or "TGRAM_COLL_NAME"
 		   if ( p.isEmpty() ) return true;	//if no element in list, just return
@@ -93,9 +93,8 @@ public class TokenStorage {
 			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
 			   bulkList.add( new UpdateOneModel( new Document( "token", p.get(i).getT() ),
 					   new Document( "$push", new Document( "URLs", 
-							   new Document("frequency", p.get(i).getE())
-							   		.append("URL", URL)
-							   		.append("position", position)  
+							   new Document("URL", URL)
+							   		.append("position", p.get(i).getE())  
 							   		) 
 							   ), new UpdateOptions().upsert(true)
 					   )	//UpdateOneModel
@@ -201,12 +200,13 @@ public class TokenStorage {
     * @param num
     * @return
     */
-   public List<Map.Entry<String,Integer>> getHighestFreq_Token( int num, String mode ) {
+   public List<Map.Entry<String,Integer>> getHighestFreq( int num, String mode ) {
 	   //final?...
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
 	   AggregateIterable<Document> iterable = db.getCollection(mode).aggregate(asList(
 			   new Document("$unwind", "$URLs"),
-			   new Document("$group", new Document("_id", "$token").append("count", new Document("$sum", "$URLs.frequency"))),
+			   new Document("$group", new Document("_id", "$token").append("count", 
+					   new Document("$sum", new Document("$size","$URLs.frequency") ))),
 				new Document( "$sort", new Document( "count", -1 ) ),
 				new Document( "$limit", num )
 		        )).allowDiskUse(true);
@@ -292,6 +292,7 @@ public class TokenStorage {
     * @param num
     * @return List of (token, frequency) 
     */
+   /*
    public List<Map.Entry<String,Integer>> getHighestFreq_3G( int num ) {
 	 //final?...
 	   final ArrayList<Map.Entry<String, Integer>> ans = new ArrayList<Map.Entry<String,Integer>>();
@@ -313,4 +314,5 @@ public class TokenStorage {
 		});
 	   return ans;
    }
+   */
 }

@@ -16,6 +16,7 @@
  */
 package crawl;
 
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -44,15 +45,22 @@ public class BasicCrawler extends WebCrawler {
         private List<Map.Entry<String, String>> pages;
         private List<String> titleList;
         private List<Map<String, String>> metaTagList;
+        private List<String> anchorList;
   
         @Override
         public void onStart() {
              filestorage = new FileStorage (FileStorage.LOCAL_URI);
              //tokenstore = new TokenStorage(TokenStorage.ICS_URI);
-             visitStats = new BasicCrawlStats();
+             try {
+				visitStats = new BasicCrawlStats();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
              pages = new ArrayList();
              titleList = new ArrayList<String>();
              metaTagList = new ArrayList<Map<String,String>>();
+             anchorList = new ArrayList<String>();
         }
   
         /**
@@ -119,13 +127,15 @@ public class BasicCrawler extends WebCrawler {
                     pages.add(test);
                     titleList.add(title);
                     metaTagList.add(metaTags);
+                    anchorList.add(anchor);
                     //commit into DB for every 20 pages
                     if ( pagecount % 500 == 0 ) {
                     	System.out.println("**********Inserting**********************");
-                    	filestorage.insertURLPage(pages, titleList, metaTagList);
+                    	filestorage.insertURLPage(pages, titleList, anchorList, metaTagList);
                     	pages.clear();
                     	titleList.clear();
                     	metaTagList.clear();
+                    	anchorList.clear();
                     	System.out.println("**********Insert complete****************");
                     }
                     
@@ -152,10 +162,11 @@ public class BasicCrawler extends WebCrawler {
     	    // Sub-classed can override this to add their custom functionality
     	  System.out.println("**********Final Inserting****************");
     	  if ( !pages.isEmpty() )
-    		  filestorage.insertURLPage(pages, titleList, metaTagList);
+    		  filestorage.insertURLPage(pages, titleList, anchorList, metaTagList);
     	  pages.clear();
     	  titleList.clear();
       	  metaTagList.clear();
+      	  anchorList.clear();
     	  System.out.println("**********Insert Complete****************");
       }
 }
