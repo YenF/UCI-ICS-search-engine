@@ -31,7 +31,7 @@ private static TokenStorage ts;
 	/**
 	 * import some data, couldn't use everytime
 	 */
-	@Ignore
+	//@Ignore
 	@Test
 	public void insertTokenTest() {
 		System.out.println("---Testing insertToken()---");
@@ -41,16 +41,21 @@ private static TokenStorage ts;
     	}
     	*/
 		System.out.println("---Testing BULK insertToken()---");
-		List l = new ArrayList();
-		List pos = new ArrayList();
+		List<Pair> l = new ArrayList<Pair>();
+		List<Integer> pos = new ArrayList<Integer>();
 		for ( int i=11; i<=20; i++) {
-	    	l.add( new Pair("hi11",i) );
-	    	l.add( new Pair("hi12",i) );
-	    	l.add( new Pair("hi13",i) );
 	    	pos.add(i);
     	}
+		l.add( new Pair("hi11",pos) );
+    	l.add( new Pair("hi12",pos) );
+    	l.add( new Pair("hi13",pos) );
 		try {
-			ts.insertToken(l, "TESTURLBULK", pos, ts.TOKEN_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK", TokenStorage.TOKEN_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK2", TokenStorage.TOKEN_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK3", TokenStorage.TOKEN_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK111", TokenStorage.TGRAM_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK222", TokenStorage.TGRAM_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK333", TokenStorage.TGRAM_COLL_NAME);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,7 +77,8 @@ private static TokenStorage ts;
 	@Test
 	public void getHighestFreq_TokenTest() {
 		System.out.println("---Testing getHighestFreq_Token()---");
-		System.out.println( ts.getHighestFreq_Token(3) );
+		System.out.println( ts.getHighestFreq(3, ts.TOKEN_COLL_NAME) );
+		System.out.println( ts.getHighestFreq(2, ts.TGRAM_COLL_NAME) );
 		System.out.println("---Complete Testing getHighestFreq_Token()---");
 	}
 	
@@ -115,7 +121,7 @@ private static TokenStorage ts;
 		}
 		System.out.println("---Complete Testing get3GFreq()---");
 	}
-	
+	/*
 	@Ignore
 	@Test
 	public void getHighestFreq_3GTest() {
@@ -123,5 +129,6 @@ private static TokenStorage ts;
 		System.out.println( ts.getHighestFreq_3G(10) );
 		System.out.println("---Complete Testing getHighestFreq_3G()---");
 	}
+	*/
 
 }

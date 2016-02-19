@@ -206,7 +206,7 @@ public class TokenStorage {
 	   AggregateIterable<Document> iterable = db.getCollection(mode).aggregate(asList(
 			   new Document("$unwind", "$URLs"),
 			   new Document("$group", new Document("_id", "$token").append("count", 
-					   new Document("$sum", new Document("$size","$URLs.frequency") ))),
+					   new Document("$sum", new Document("$size","$URLs.position") ))),
 				new Document( "$sort", new Document( "count", -1 ) ),
 				new Document( "$limit", num )
 		        )).allowDiskUse(true);
