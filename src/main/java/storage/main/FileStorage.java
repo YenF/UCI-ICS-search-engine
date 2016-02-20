@@ -110,6 +110,7 @@ public class FileStorage {
 	* @param content
 	* @return True for success, False for something wrong
 	*/
+	/*
    public boolean insertURLPage(String URL, String content) {
 	   //get collection
    try{
@@ -121,7 +122,8 @@ public class FileStorage {
 	   }
 	   return true;
    }
-   
+   */
+	
 	/**
 	* Set iterator of collection "URL_Pages". Use getNextPage() to retrieve page one by one.
 	*/
@@ -131,9 +133,9 @@ public class FileStorage {
    }
    
    /**
-	* Return HashMap type of (URL, text). Call it multiple times until it returns null;
+	* Return HashMap type of ( [URL, text, title, anchor] , [metaTags] ). Call it multiple times until it returns null;
 	* If return null, means no more element.
-	* @return Map.Entry of (URL, text)
+	* @return Map.Entry 
 	*/
    public Map.Entry< List<String>, List< Map<String,String> > > getNextPage() {
 	   HashMap<List<String>, List< Map<String,String> > > tmp = null;
@@ -155,6 +157,7 @@ public class FileStorage {
 	   return ret;
    }
    
+   @Deprecated
    /**
 	* Get page content by URL. Page will be in String format. Only one page will be returned.
 	* @param URL
@@ -165,26 +168,4 @@ public class FileStorage {
 	   return it.iterator().next().getString("content");
    }
 	
-   // functions below mainly for proj2
-   
-   public int getUniquePageNum() {
-	   AggregateIterable<Document> iterable = db.getCollection(PAGE_COLL_NAME).aggregate(asList(
-		        new Document("count", new Document("$sum", 1))
-		        )
-			   );
-	   
-	   return iterable.first().getInteger("count");
-   }
-   
-   public List<Map.Entry<String, Integer>> getUniqueSubdomainList() {
-	   
-	   return new ArrayList();
-   }
-   
-   public Map.Entry<String, Integer> getLongestPage() {
-	   
-	   return new AbstractMap.SimpleEntry<String, Integer>(null);
-   }
-   
-   
 }

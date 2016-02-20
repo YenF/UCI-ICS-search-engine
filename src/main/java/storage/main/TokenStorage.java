@@ -70,18 +70,19 @@ public class TokenStorage {
 		coll = db.getCollection(TOKEN_COLL_NAME);
 		IndexOptions IndOpt = new IndexOptions();
 		IndOpt.unique(true);
-		coll.createIndex ( new Document("token",1).append("URL", 1) , IndOpt);
+		coll.createIndex ( new Document("token",1), IndOpt);
 		
 		db.getCollection(TGRAM_COLL_NAME).drop();
 		db.createCollection(TGRAM_COLL_NAME);
 		coll = db.getCollection(TGRAM_COLL_NAME);
-		coll.createIndex ( new Document("token",1).append("URL", 1) , IndOpt);
+		coll.createIndex ( new Document("token",1), IndOpt);
 	}
 	
 	/**
-	    * Insert token or tgram into DB.
+	    * Insert token or tgram into DB. Mode could be ts.TOKEN_COLL_NAME
 	    * @param p 
 	    * @param URL
+	    * @param mode 
 	    * @return True = succeed, False = duplicated (token, URL) or something wrong (could be ignore)
 	    */
 	   public boolean insertToken( List<Pair> p, String URL, 
@@ -122,7 +123,7 @@ public class TokenStorage {
 		   
 		   for ( Document token : iter ) {
 			   List<Document> URLs = (List<Document>) token.get("URLs");
-			   if ( URLs != null ) {
+			   if ( URLs != null ) {	//some outdated entry may not have this field
 				   countDoc++;
 				   bulkList.add(
 					   new UpdateOneModel(
@@ -174,7 +175,9 @@ public class TokenStorage {
 	   }
 	   return true;
    }
-   
+   */
+	   
+   @Deprecated
    /**
     * Get count of specific token in collections
     * @param token
