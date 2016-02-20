@@ -15,16 +15,16 @@ public class Hello
 	public static  void main(String args[])
     {
     	//System.setProperty("wordnet.database.dir", "C:\\Program Files (x86)\\WordNet\\2.1\\dict");
-		List<String> list = TextProcessor.tokenizeFile(".\\"+args[0]);
+		/*List<String> list = TextProcessor.tokenizeFile(".\\"+args[0]);
 		if(args[1].equals("A")) TextProcessor.print(list);
 		if(args[1].equals("B")) TextProcessor.print(TextProcessor.computeWordFrequencies(list));
 		if(args[1].equals("C")) TextProcessor.print3g(TextProcessor.computeThreeGramFrequencies(list));
 		if(args[1].equals("D")) TextProcessor.printAna(TextProcessor.detecAnagrams(list));
-		
-		String teststr = "http://luci.ics.uci.edu/blog/?tag=contest";
+		*/
+		String teststr = "This is a book,Hello";
 	    List<String> list1 = TextProcessor.tokenizeFile(teststr);
-	    TextProcessor.print(TextProcessor.computeWordFrequencies(list1));
-		String[] arry = teststr.split("//|\\s+|\\n+|\\.");
+	    //TextProcessor.print(TextProcessor.computeWordFrequencies(list1));
+		String[] arry = teststr.split("//|,|\\s+|\\n+|\\.");
 		for(String tempstr:arry){
 			System.out.println(tempstr);
 		}
