@@ -18,7 +18,7 @@ public class TextProcessor {
 	public static Statement stmt = null;
 	public static List<String> tokenizeFile(String inputstring){
 		List<String> list = new LinkedList<String>();
-
+			if(inputstring==null) return list;
 			//FileReader filereader = new FileReader(filename);
 			//BufferedReader bufferReader = new BufferedReader(filereader);
 			
@@ -62,7 +62,102 @@ public class TextProcessor {
 		}
 		return;
 	}
-	public static Pair[] computeWordFrequencies(List<String> list){
+	public static Pair[] computeWordPosition(List<String> tokenlist,List<String> anchor,List<String> title){
+		Hashtable<String,List<Integer>> hash = new Hashtable<String,List<Integer>>();
+		
+
+		helperWordPosition(hash,title,new Integer(-3));
+		helperWordPosition(hash,anchor,new Integer(-2));
+		helperWordPosition(hash,tokenlist,null);
+
+		Iterator<String>  keyite = hash.keySet().iterator();
+		Pair[] pairs = new Pair[hash.size()];
+		int i = 0;
+		while(keyite.hasNext()){
+			String str = keyite.next();
+			List<Integer> list = hash.get(str);
+			pairs[i++] = new Pair(str,list);
+		}
+		Arrays.sort(pairs);
+		return pairs;
+	}
+	private static void helperWordPosition(Hashtable<String,List<Integer>> hash,List<String> list,Integer tempint){
+		int incre=0;
+		String tempstr;
+		List<Integer> templist;
+		if(tempint==null){
+			tempint = new Integer(0);
+			incre = 1;
+		}
+		Iterator<String> list_ite = list.iterator();
+		while(list_ite.hasNext()){
+			tempint = tempint + incre;
+			tempstr = list_ite.next();
+			templist = hash.get(tempstr);
+			if(templist==null){
+				templist = new LinkedList<Integer>();
+				templist.add(tempint);
+				hash.put(tempstr, templist);
+			}else{
+				templist.add(tempint);
+				hash.put(tempstr, templist);
+			}
+		}
+	}
+	public static void printWordPosition(Pair[] pairarry){
+		
+		for(int i=0;i<pairarry.length;i++){
+			Iterator<Integer> ite = pairarry[i].getE().iterator();
+			System.out.printf("%s\n", pairarry[i].getT());
+			while(ite.hasNext()){
+				System.out.println(ite.next());
+			}
+		}
+	}
+	public static Pair[] computeThreeGramPosition(List<String> tokenlist,List<String> anchor,List<String> title){
+		Hashtable<String,List<Integer>> hash = new Hashtable<String,List<Integer>>();
+		helpercomputeThreeGramPosition(hash,title,new Integer(-3));
+		helpercomputeThreeGramPosition(hash,anchor,new Integer(-2));
+		helpercomputeThreeGramPosition(hash,tokenlist,null);
+		Iterator<String>  keyite = hash.keySet().iterator();
+		Pair[] pairs = new Pair[hash.size()];
+		int i = 0;
+		while(keyite.hasNext()){
+			String str = keyite.next();
+			List<Integer> list = hash.get(str);
+			pairs[i++] = new Pair(str,list);
+		}
+		Arrays.sort(pairs);
+		return pairs;
+	}
+	private static void helpercomputeThreeGramPosition(Hashtable<String,List<Integer>> hash,List<String> list,Integer tempint){
+		String[] strarry = list.toArray(new String[0]);
+		int incre=0;
+		String tempstr;
+		List<Integer> templist;
+		if(tempint==null){
+			tempint = new Integer(0);
+			incre = 1;
+		}
+		for(int i=0;i<(strarry.length-2);i++){
+			//if(strarry[i].length()==0) System.out.printf("Warning!Warning!\nstrarry[%d] is empty\nstrarry[%d] is %s\nstrarry[%d] is %s\n",i,i-1,strarry[i-1],i+1,strarry[i+1]);
+			tempint = tempint + incre;
+			tempstr = strarry[i]+" "+strarry[i+1]+" "+strarry[i+2];
+			templist = hash.get(tempstr);
+			if(templist==null){
+				templist = new LinkedList<Integer>();
+				templist.add(tempint);
+				hash.put(tempstr, templist);
+			}else{
+				templist.add(tempint);
+				hash.put(tempstr, templist);			}
+		}
+	}
+	public static void printThreeGramPosition(Pair[] pairarry){
+		
+		printWordPosition(pairarry);
+	}
+	/*public static Pair[] computeWordFrequencies(List<String> list){
 		Hashtable<String,Integer> hash = new Hashtable<String,Integer>();
 		Iterator<String> ite = list.iterator();
 		String tempstr;
@@ -95,12 +190,6 @@ public class TextProcessor {
 	}
 	public static Pair[] computeThreeGramFrequencies(List<String> list){
 		String[] strarry = list.toArray(new String[0]);
-		/*System.out.println("20 is "+list.get(20));
-		System.out.println("21 is "+list.get(21));
-		System.out.println("22 is "+list.get(22));
-		System.out.println("!!20 is "+strarry[20]);
-		System.out.println("!!21 is "+strarry[21]);
-		System.out.println("!!22 is "+strarry[22]);*/
 
 		Hashtable<String,Integer> hash = new Hashtable<String,Integer>();
 		String tempstr;
@@ -225,7 +314,7 @@ public class TextProcessor {
 			}
 			System.out.printf("\n");
 		}
-	}
+	}*/
 	/*private static void generatePattern(char[] pattern,int[] stock,int level,List<String> list){
 		//System.out.printf("level is %d pattern.length is %d\n", level,pattern.length);
 		if(level==pattern.length){

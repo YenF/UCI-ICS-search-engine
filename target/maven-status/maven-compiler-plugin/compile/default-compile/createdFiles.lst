@@ -4,13 +4,10 @@ storage\main\MongoDB.class
 crawl\BasicCrawler.class
 data\Pair\PairE.class
 data\text_processing\TextProcessor.class
-data\Token.class
 data\IRUtilities\Porter.class
 crawl\BasicCrawlStats.class
 storage\main\FileStorage.class
 data\Hello.class
-storage\main\TokenStorage$2.class
-crawl\URLhelper.class
 data\tokenGen.class
 crawl\BasicCrawlController.class
 data\IRUtilities\Stopwords.class
