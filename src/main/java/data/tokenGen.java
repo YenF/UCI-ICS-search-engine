@@ -29,7 +29,7 @@ public class tokenGen {
 	}
 	public static void main(String[] args) throws Exception {
 	   	tokenGen tokengen = new tokenGen();
-	   	//tokengen.gettokenstore().reset();
+	   	tokengen.gettokenstore().reset();
 	   	FileStorage fs = new FileStorage(FileStorage.ICS_URI);
 		PrintWriter writer = new PrintWriter("pageURLs.txt");
 		PrintWriter uniwriter = new PrintWriter("Subdomains.txt");
@@ -106,7 +106,7 @@ public class tokenGen {
 		List<Pair> listfreq = new ArrayList<Pair>(Arrays.asList(pairfreq));
 		//TextProcessor.printWordPosition(pairfreq);
 		try{
-			if(!tokenstore.insertToken(listfreq, URL,"TOKEN_COLL_NAME")){
+			if(!tokenstore.insertToken(listfreq, URL,TokenStorage.TOKEN_COLL_NAME)){
 				System.out.println("Insert token list fail: "+URL);
 				result = -1;
 			}
@@ -119,7 +119,7 @@ public class tokenGen {
 		//TextProcessor.printThreeGramPosition(pair3g);
 		System.out.printf("list3g's size is %d\n", list3g.size());
 		try{
-			if(!tokenstore.insertToken(list3g, URL,"TGRAM_COLL_NAME")){
+			if(!tokenstore.insertToken(list3g, URL,TokenStorage.TGRAM_COLL_NAME)){
 				System.out.println("Insert 3g list fail: "+URL);
 				result = -1;
 			}
