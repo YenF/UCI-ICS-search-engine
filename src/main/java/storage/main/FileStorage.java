@@ -47,6 +47,8 @@ public class FileStorage {
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ds051635.mongolab.com:51635/cs221_rawpages";
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
+	public final static String ICS_NOAUTH_URI = 
+			"mongodb://ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
 	public final static String LOCAL_URI = 
 			"mongodb://127.0.0.1/"+RAWPAGE_DB_NAME;
 	public final static String JIAN_URI = 
