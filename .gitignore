@@ -1,0 +1,5 @@
+target/*
+target/classes/storage/main/TokenStorage.class
+target/classes/storage/main/FileStorage.class
+*.class
+/target/

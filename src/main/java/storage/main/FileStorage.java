@@ -48,7 +48,7 @@ public class FileStorage {
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
 	public final static String LOCAL_URI = 
-			"mongodb://UCI_Handsomes:UCI_Handsomes@127.0.0.1:8888/"+RAWPAGE_DB_NAME;
+			"mongodb://127.0.0.1/"+RAWPAGE_DB_NAME;
 	public final static String JIAN_URI = 
 			"mongodb://70.187.178.194/"+RAWPAGE_DB_NAME;
 	
