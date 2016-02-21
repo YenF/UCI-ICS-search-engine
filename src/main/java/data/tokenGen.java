@@ -22,7 +22,7 @@ public class tokenGen {
 	private static int maxsize = 0;
 	private static String maxsize_URL = null;
 	public tokenGen(){
-		tokenstore= new TokenStorage(TokenStorage.ICS_URI);
+		tokenstore= new TokenStorage(TokenStorage.LOCAL_URI);
 	}
 	public TokenStorage gettokenstore(){
 		return tokenstore;
@@ -30,7 +30,7 @@ public class tokenGen {
 	public static void main(String[] args) throws Exception {
 	   	tokenGen tokengen = new tokenGen();
 	   	tokengen.gettokenstore().reset();
-	   	FileStorage fs = new FileStorage(FileStorage.ICS_URI);
+	   	FileStorage fs = new FileStorage(FileStorage.LOCAL_URI);
 		PrintWriter writer = new PrintWriter("pageURLs.txt");
 		PrintWriter uniwriter = new PrintWriter("Subdomains.txt");
 		Hashtable<String,Integer> hashset = new Hashtable<String,Integer>();
@@ -42,7 +42,7 @@ public class tokenGen {
     	System.out.println("---printing out page URL---");
     	int count = 0;
     	while ( page!=null ) {
-    		//if(++count>2) break;
+    		if(++count>90761) break;
     		totalPages++;
     		page_list = page.getKey();
     		/*System.out.println("URL:\n"+page_list.get(0));
@@ -66,7 +66,7 @@ public class tokenGen {
     			page = fs.getNextPage();
     		}
     		catch(Exception e){
-    			System.out.println("no next page");
+    			System.out.println(e.getMessage());
     			//break;
     		}
     	}
