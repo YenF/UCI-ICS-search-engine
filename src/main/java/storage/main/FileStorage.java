@@ -49,6 +49,8 @@ public class FileStorage {
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+RAWPAGE_DB_NAME;
 	public final static String LOCAL_URI = 
 			"mongodb://127.0.0.1/"+RAWPAGE_DB_NAME;
+	public final static String JIAN_URI = 
+			"mongodb://70.187.178.194/"+RAWPAGE_DB_NAME;
 	
 	private List bulkList;
 	private Logger mongoLogger;
@@ -128,8 +130,9 @@ public class FileStorage {
 	* Set iterator of collection "URL_Pages". Use getNextPage() to retrieve page one by one.
 	*/
    public void resetPagesIterator() {
-	   iter = db.getCollection(PAGE_COLL_NAME).find().sort(
+	   iter = db.getCollection(PAGE_COLL_NAME).find().noCursorTimeout(true).sort(
 			   new Document("URL",1) ).iterator();
+	   
    }
    
    /**

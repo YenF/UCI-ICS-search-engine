@@ -23,8 +23,8 @@ private static TokenStorage ts;
 	
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
-		ts = new TokenStorage(TokenStorage.MONGOLAB_URI);
-		//ts.reset();
+		ts = new TokenStorage(TokenStorage.ICS_URI);
+		ts.reset();
 		//Thread.sleep(1000);
 	}
 	
@@ -51,6 +51,7 @@ private static TokenStorage ts;
     	l.add( new Pair("hi13",pos) );
 		try {
 			ts.insertToken(l, "TESTURLBULK", TokenStorage.TOKEN_COLL_NAME);
+			ts.insertToken(l, "TESTURLBULK", TokenStorage.TOKEN_COLL_NAME);
 			ts.insertToken(l, "TESTURLBULK2", TokenStorage.TOKEN_COLL_NAME);
 			ts.insertToken(l, "TESTURLBULK3", TokenStorage.TOKEN_COLL_NAME);
 			ts.insertToken(l, "TESTURLBULK111", TokenStorage.TGRAM_COLL_NAME);
@@ -61,6 +62,7 @@ private static TokenStorage ts;
 		}
 		System.out.println("---Complete Testing insertToken()---");
 	}
+	
 	
 	@Ignore
 	@Test
@@ -73,7 +75,7 @@ private static TokenStorage ts;
 		System.out.println("---Complete Testing getTokenFreq()---");
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
 	public void getHighestFreq_TokenTest() {
 		System.out.println("---Testing getHighestFreq_Token()---");
