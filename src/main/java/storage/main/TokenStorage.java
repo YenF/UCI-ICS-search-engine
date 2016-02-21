@@ -39,6 +39,8 @@ public class TokenStorage {
 	public final static String MONGOLAB_URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds055535.mongolab.com:55535/cs221_tokens";
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
+	public final static String ICS_NOAUTH_URI = 
+			"mongodb://ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
 	public final static String LOCAL_URI = 
 			"mongodb://127.0.0.1/";
 	//private static final TokenStorage instance = null;
@@ -98,13 +100,16 @@ public class TokenStorage {
 		   List bulkList = new ArrayList();
 		   //hash URL to get ID, it is too expensive to save every token with URLs
 		   int URLID = URL.hashCode();
-		   try{
-			   db.getCollection(URLID_COLL_NAME).insertOne( 
-					   new Document("URLID", URLID).append("URL", URL)
-					   );
-		   } catch( Exception e ) {
-			   System.out.println("Warn: URLHash duplicated");
-			   //return false;	//if duplicate or something wrong
+		   if ( mode == this.TOKEN_COLL_NAME) {	//in case of duplication
+			   try{
+				   db.getCollection(URLID_COLL_NAME).insertOne( 
+						   new Document("URLID", URLID).append("URL", URL)
+						   );
+			   } catch( Exception e ) {
+				   e.printStackTrace();
+				   System.out.println("Warn: URLHash duplicated");
+				   //return false;	//if duplicate or something wrong
+			   }
 		   }
 		   
 		   for ( int i=0; i<p.size(); i++ ) {
