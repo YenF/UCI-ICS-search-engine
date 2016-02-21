@@ -7,8 +7,10 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -23,7 +25,7 @@ public class FileStorageTest {
 	
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
-		fs = new FileStorage(FileStorage.ICS_URI);
+		fs = new FileStorage(FileStorage.JIAN_URI);
 		//fs.reset();
 		//Thread.sleep(1000);
 	}
@@ -42,7 +44,7 @@ public class FileStorageTest {
 	public void testInsertPage() {
 		System.out.println("---Testing insertPage()---");
 		for ( int i=1; i<=10; i++) {
-	    	fs.insertURLPage("TESTURL"+i, "hi"+i);
+	    	//fs.insertURLPage("TESTURL"+i, "hi"+i);
     	}
 		System.out.println("---Testing BULK insertPage()---");
 		List l = new ArrayList();
@@ -61,23 +63,34 @@ public class FileStorageTest {
     @Test
     public void testGetPage() throws FileNotFoundException
     {
-    	PrintWriter writer = new PrintWriter("pageURLs.txt");
+    	//PrintWriter writer = new PrintWriter("pageURLs.txt");
     	int totalPages = 0;
-    	
+    	Set<Integer> s = new HashSet<Integer>();
     	System.out.println("---testing getPage---");
     	fs.resetPagesIterator();
     	Map.Entry<List<String>, List< Map<String,String> > > page = fs.getNextPage();
     	System.out.println("---printing out page URL---");
-    	while ( page!=null && totalPages<10 ) {
+    	while ( page!=null && totalPages<91000 ) {
     		totalPages++;
-    		writer.println(page.getKey());
+    		//writer.println(page.getKey().get(0));
     		//writer.println(page.getValue());
-    		writer.println("*******");
+    		//writer.println("*******");
+    		
+    		if ( !s.add(page.getKey().get(0).hashCode()) ){
+    			System.out.println("Duplicate!!");
+    		}
+    		/*
+    		if ( !s.add(1) ){
+    			System.out.println("Duplicate!! 1!!");
+    		}
+    		*/
     		//System.out.println("Page URL: " + page.getKey());
     		page = fs.getNextPage();
+    		if ( totalPages%2000==0 )
+    			System.out.println("Now in Page: " + totalPages);
     	}
-    	writer.println("Total Pages: "+totalPages);
-    	writer.close();
+    	//writer.println("Total Pages: "+totalPages);
+    	//writer.close();
     	System.out.println("---getPage() function test complete---");
     	
         assertTrue(true);

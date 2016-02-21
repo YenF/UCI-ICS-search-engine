@@ -35,6 +35,7 @@ public class TokenStorage {
 	public final static String TGRAM_COLL_NAME = "threeGrams";
 	public final static String TOKEN_DB_NAME = "cs221_tokens";
 	public final static String PAGE_COLL_NAME = "URL_Pages";
+	public final static String URLID_COLL_NAME = "URLID";
 	public final static String MONGOLAB_URI = "mongodb://UCI_Handsomes:UCI_Handsomes@ds055535.mongolab.com:55535/cs221_tokens";
 	public final static String ICS_URI = 
 			"mongodb://UCI_Handsomes:UCI_Handsomes@ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
@@ -76,6 +77,11 @@ public class TokenStorage {
 		db.createCollection(TGRAM_COLL_NAME);
 		coll = db.getCollection(TGRAM_COLL_NAME);
 		coll.createIndex ( new Document("token",1), IndOpt);
+		
+		db.getCollection(URLID_COLL_NAME).drop();
+		db.createCollection(URLID_COLL_NAME);
+		coll = db.getCollection(URLID_COLL_NAME);
+		coll.createIndex ( new Document("URLID",1), IndOpt);
 	}
 	
 	/**
@@ -90,11 +96,22 @@ public class TokenStorage {
 		   //mode will be "TOKEN_COLL_NAME" or "TGRAM_COLL_NAME"
 		   if ( p.isEmpty() ) return true;	//if no element in list, just return
 		   List bulkList = new ArrayList();
+		   //hash URL to get ID, it is too expensive to save every token with URLs
+		   int URLID = URL.hashCode();
+		   try{
+			   db.getCollection(URLID_COLL_NAME).insertOne( 
+					   new Document("URLID", URLID).append("URL", URL)
+					   );
+		   } catch( Exception e ) {
+			   System.out.println("Warn: URLHash duplicated");
+			   //return false;	//if duplicate or something wrong
+		   }
+		   
 		   for ( int i=0; i<p.size(); i++ ) {
 			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
 			   bulkList.add( new UpdateOneModel( new Document( "token", p.get(i).getT() ),
-					   new Document( "$push", new Document( "URLs", 
-							   new Document("URL", URL)
+					   new Document( "$addToSet", new Document( "URLs", 
+							   new Document("URL", URLID)
 							   		.append("position", p.get(i).getE())  
 							   		) 
 							   ), new UpdateOptions().upsert(true)
