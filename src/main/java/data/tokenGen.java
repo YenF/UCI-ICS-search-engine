@@ -45,6 +45,7 @@ public class tokenGen {
     	while ( page!=null ) {
     		if(++count>90761) break;
     		totalPages++;
+    		System.out.printf("pages count: %d\n",totalPages);
     		page_list = page.getKey();
     		/*System.out.println("URL:\n"+page_list.get(0));
     		System.out.println("The following is the document content:\n"+page_list.get(1)+"\n");
@@ -56,12 +57,13 @@ public class tokenGen {
     		Integer tempint = hashset.get(arry[1]);
     		if(tempint==null){
     			hashset.put(arry[1],new Integer(1));
-    			System.out.printf("new subdomain is %s %d\n", arry[1],1);
+    			//System.out.printf("new subdomain is %s %d\n", arry[1],1);
     		}else{
     			tempint = tempint+1;
     			hashset.put(arry[1],tempint);
-    			System.out.printf("exising subdomain is %s %d\n", arry[1],tempint.intValue());
+    			//System.out.printf("exising subdomain is %s %d\n", arry[1],tempint.intValue());
     		}
+    		if(totalPages%50 ==0) System.out.printf("current subdomain is %s\n",arry[1]);
     		//System.out.println("Page URL: " + page.getKey());
     		try{
     			page = fs.getNextPage();
