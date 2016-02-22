@@ -22,6 +22,7 @@ public class tokenGen {
 	private static int maxsize = 0;
 	private static String maxsize_URL = null;
 	public tokenGen(){
+		
 		tokenstore= new TokenStorage(TokenStorage.LOCAL_URI);
 	}
 	public TokenStorage gettokenstore(){
@@ -66,7 +67,7 @@ public class tokenGen {
     			page = fs.getNextPage();
     		}
     		catch(Exception e){
-    			System.out.println(e.getMessage());
+    			System.out.println("error message"+e.getMessage());
     			//break;
     		}
     	}
