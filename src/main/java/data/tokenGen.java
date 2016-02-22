@@ -45,7 +45,6 @@ public class tokenGen {
     	while ( page!=null ) {
     		if(++count>90761) break;
     		totalPages++;
-    		System.out.printf("pages count: %d\n",totalPages);
     		page_list = page.getKey();
     		/*System.out.println("URL:\n"+page_list.get(0));
     		System.out.println("The following is the document content:\n"+page_list.get(1)+"\n");
@@ -63,7 +62,11 @@ public class tokenGen {
     			hashset.put(arry[1],tempint);
     			//System.out.printf("exising subdomain is %s %d\n", arry[1],tempint.intValue());
     		}
-    		if(totalPages%50 ==0) System.out.printf("current subdomain is %s\n",arry[1]);
+    		if(totalPages%50 ==0){
+        		System.out.printf("pages count: %d\n",totalPages);
+
+    			System.out.printf("current subdomain is %s\n",arry[1]);
+    		}
     		//System.out.println("Page URL: " + page.getKey());
     		try{
     			page = fs.getNextPage();
@@ -120,7 +123,7 @@ public class tokenGen {
 		Pair[] pair3g =  TextProcessor.computeThreeGramPosition(content_list,anchor_list,title_list);
 		List<Pair> list3g = new ArrayList<Pair>(Arrays.asList(pair3g));
 		//TextProcessor.printThreeGramPosition(pair3g);
-		System.out.printf("list3g's size is %d\n", list3g.size());
+		//System.out.printf("list3g's size is %d\n", list3g.size());
 		try{
 			if(!tokenstore.insertToken(list3g, URL,TokenStorage.TGRAM_COLL_NAME)){
 				System.out.println("Insert 3g list fail: "+URL);
