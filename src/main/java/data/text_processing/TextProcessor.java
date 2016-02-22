@@ -93,7 +93,8 @@ public class TextProcessor {
 		while(list_ite.hasNext()){
 			tempint = tempint + incre;
 			tempstr = list_ite.next();
-			if(tempstr.length()==0) continue;
+			
+			if(tempstr.length()==0 || tempstr.length()>30) continue;
 			templist = hash.get(tempstr);
 			if(templist==null){
 				templist = new LinkedList<Integer>();
@@ -144,7 +145,7 @@ public class TextProcessor {
 			//if(strarry[i].length()==0) System.out.printf("Warning!Warning!\nstrarry[%d] is empty\nstrarry[%d] is %s\nstrarry[%d] is %s\n",i,i-1,strarry[i-1],i+1,strarry[i+1]);
 			tempint = tempint + incre;
 			tempstr = strarry[i]+" "+strarry[i+1]+" "+strarry[i+2];
-			if(tempstr.length()==2) continue;
+			if(tempstr.length()==2 || tempstr.length()>90) continue;
 			templist = hash.get(tempstr);
 			if(templist==null){
 				templist = new LinkedList<Integer>();
