@@ -43,6 +43,8 @@ public class TokenStorage {
 			"mongodb://ramon-limon.ics.uci.edu:8888/"+TOKEN_DB_NAME;
 	public final static String LOCAL_URI = 
 			"mongodb://127.0.0.1/";
+	public final static String LOCAL_8888_URI = 
+			"mongodb://127.0.0.1:8888/";
 	//private static final TokenStorage instance = null;
 	//private MongoClient client;
 	private MongoDB DB;
@@ -115,7 +117,7 @@ public class TokenStorage {
 		   for ( int i=0; i<p.size(); i++ ) {
 			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
 			   bulkList.add( new UpdateOneModel( new Document( "token", p.get(i).getT() ),
-					   new Document( "$addToSet", new Document( "URLs", 
+					   new Document( "$push", new Document( "URLs", 
 							   new Document("URL", URLID)
 							   		.append("position", p.get(i).getE())  
 							   		) 
@@ -161,11 +163,12 @@ public class TokenStorage {
 			   if ( countDoc % 10000 == 0 ) {
 				   try {
 					   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
+					   System.out.println("Compute " + countDoc + " TFIDFs");
 				   } catch ( Exception e ) {
 					   e.printStackTrace();
 				   }
 				   bulkList.clear();
-				   countDoc=1;
+				   //countDoc=1;
 			   }
 		   }
 		   if ( !bulkList.isEmpty() ) { 
@@ -199,12 +202,12 @@ public class TokenStorage {
    }
    */
 	   
-   @Deprecated
    /**
     * Get count of specific token in collections
     * @param token
     * @return number of occurrence in whole collection
     */
+   /*
    public int getTokenFreq( final String token ) {
 	   int ans=0;
 	   AggregateIterable<Document> iterable = db.getCollection(TOKEN_COLL_NAME).aggregate(asList(
@@ -216,9 +219,10 @@ public class TokenStorage {
 		    	System.out.println(document.toJson());
 		    }
 		});
-		*/
+		
 	   return iterable.first().getInteger("count");
    }
+	*/
    
    /**
     * List highest frequency ranks of tokens & 3G. If num=10, list top 10 of tokens.
@@ -303,6 +307,7 @@ public class TokenStorage {
     * @param token
     * @return
     */
+   /*
    public int get3GFreq( String token ) {
 	   AggregateIterable<Document> iterable = db.getCollection(TGRAM_COLL_NAME).aggregate(asList(
 			   new Document( "$match", new Document("token", token) ),
@@ -310,7 +315,7 @@ public class TokenStorage {
 	   
 	   return iterable.first().getInteger("count");
    }
-   
+   */
    /**
     * List highest frequency ranks of 3-grams. If num=10, list top 10 of 3-grams.
     * Need map reduce function to threeGramFreq collection
