@@ -404,7 +404,7 @@ public class WebCrawler implements Runnable {
             webURL.setDepth((short) -1);
             webURL.setDocid(newdocid);
         	System.out.printf("Warnig: The duplicate URL is %s\n its anchor text is %s\n its parent URL is %s\n", webURL.getURL(),webURL.getAnchor(),webURL.getParentUrl());
-
+        	filestorage.appendAnchorText(webURL.getURL(),webURL.getAnchor());
           } else {
             webURL.setDocid(-1);
             webURL.setDepth((short) (curURL.getDepth() + 1));
