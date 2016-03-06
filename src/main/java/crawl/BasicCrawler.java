@@ -39,7 +39,8 @@ public class BasicCrawler extends WebCrawler {
         private final static Pattern IMAGE_EXTENSIONS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|png|tiff|mid|mp2" +
                 "|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf|java|cpp|rm|smil|wmv|swf|wma|zip|rar|gz|ico|pfm|c|h|o))$");
         private int pagecount = 0;
-        private FileStorage filestorage;
+        protected final Object mutex = new Object();
+        
         private TokenStorage tokenstore;
         private BasicCrawlStats visitStats;
         private List<Map.Entry<String, String>> pages;
@@ -49,7 +50,6 @@ public class BasicCrawler extends WebCrawler {
   
         @Override
         public void onStart() {
-             filestorage = new FileStorage (FileStorage.LOCAL_URI);
              //tokenstore = new TokenStorage(TokenStorage.ICS_URI);
              try {
 				visitStats = new BasicCrawlStats();
@@ -94,9 +94,11 @@ public class BasicCrawler extends WebCrawler {
        */
       @Override
       public void visit(Page page) {
-
-              pagecount++;
+    	  		pagecount++;
+    	  		System.out.printf("pagecount is %d\n",pagecount);
+    	  	
               //if(tokengen==null) tokengen = new tokenGen();
+    	  	  boolean pagemod = false;
               int docid = page.getWebURL().getDocid();
               String url = page.getWebURL().getURL();
               String domain = page.getWebURL().getDomain();
@@ -129,6 +131,7 @@ public class BasicCrawler extends WebCrawler {
                     metaTagList.add(metaTags);
                     anchorList.add(anchor);
                     //commit into DB for every 20 pages
+                    
                     if ( pagecount % 500 == 0 ) {
                     	System.out.println("**********Inserting**********************");
                     	filestorage.insertURLPage(pages, titleList, anchorList, metaTagList);
