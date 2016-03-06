@@ -113,21 +113,20 @@ public class FileStorage {
 		   return true;
 	}
 	
-	public void appendAnchorText( String URL, String anchorText ) {
-		UpdateResult ur = db.getCollection(PAGE_COLL_NAME).updateOne( new Document( "URL", URL),
-				new Document("$addToSet",
-						new Document( "anchor", anchorText)
-					)
-				, new UpdateOptions().upsert(true)
-			);
-		/*
-		if ( ur.getUpsertedId()!=null ) {
-			System.out.println("Append anchorText success.");
-			System.out.println("But doesn't find " + URL + " in DB. Reasons may be: ");
-			System.out.println("1. The page may still in bulklist (waiting for inserting)");
-			System.out.println("2. No such page exist");
-		}
-		*/
+	public void appendAnchorText( List<String> URL, List<String> anchorText ) {
+		List bulkList = new ArrayList();
+		   for ( int i=0; i<URL.size(); i++ ) {
+			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
+			   bulkList.add( new UpdateOneModel( new Document( "URL", URL.get(i) ),
+					   new Document("$addToSet", 
+								new Document( "anchor", anchorText.get(i) )
+						)	//$set
+					   , new UpdateOptions().upsert(true)
+					  )	//UpdateOneModel
+				);
+		   }
+		   BulkWriteOptions opt = new BulkWriteOptions();
+		   db.getCollection(PAGE_COLL_NAME).bulkWrite(bulkList, opt.ordered(false));
 	}
 	
 	/**
