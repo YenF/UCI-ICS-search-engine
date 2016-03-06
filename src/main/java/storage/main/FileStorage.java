@@ -24,6 +24,7 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.UpdateOneModel;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.UpdateResult;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -69,7 +70,7 @@ public class FileStorage {
 		DB.init(URI, RAWPAGE_DB_NAME);
 		
 		//change logger property
-		mongoLogger = (Logger) LoggerFactory.getLogger( "org.mongodb.driver" );
+		mongoLogger = (Logger) LoggerFactory.getLogger( "org.mongodb.driver.cluster" );
 	    mongoLogger.setLevel(Level.WARN);
 	       // Now connect to your databases
 	    db = DB.db;
@@ -97,9 +98,11 @@ public class FileStorage {
 					   new Document("$set", 
 							   new Document( "URL", pages.get(i).getKey() )
 							   .append( "title", titles.get(i) )
-							   .append( "anchor", anchors.get(i) )
+							   //.append( "anchor", anchors.get(i) )
 							   .append( "content", pages.get(i).getValue() )
 							   .append( "metaTags", metaTags.get(i) )
+						).append("$addToSet", 
+								new Document( "anchor", anchors.get(i) )
 						)	//$set
 					   , new UpdateOptions().upsert(true)
 					  )	//UpdateOneModel
@@ -110,25 +113,22 @@ public class FileStorage {
 		   return true;
 	}
 	
-	/**
-	* Insert an URL page into DB, uniqueness is determined by URL
-	* @param URL
-	* @param content
-	* @return True for success, False for something wrong
-	*/
-	/*
-   public boolean insertURLPage(String URL, String content) {
-	   //get collection
-   try{
-	   db.getCollection(PAGE_COLL_NAME).insertOne( 
-   new Document("URL", URL).append("content", content)
-				   );
-	   } catch ( Exception e ) {
-		   return false;
-	   }
-	   return true;
-   }
-   */
+	public void appendAnchorText( String URL, String anchorText ) {
+		UpdateResult ur = db.getCollection(PAGE_COLL_NAME).updateOne( new Document( "URL", URL),
+				new Document("$addToSet",
+						new Document( "anchor", anchorText)
+					)
+				, new UpdateOptions().upsert(true)
+			);
+		/*
+		if ( ur.getUpsertedId()!=null ) {
+			System.out.println("Append anchorText success.");
+			System.out.println("But doesn't find " + URL + " in DB. Reasons may be: ");
+			System.out.println("1. The page may still in bulklist (waiting for inserting)");
+			System.out.println("2. No such page exist");
+		}
+		*/
+	}
 	
 	/**
 	* Set iterator of collection "URL_Pages". Use getNextPage() to retrieve page one by one.
