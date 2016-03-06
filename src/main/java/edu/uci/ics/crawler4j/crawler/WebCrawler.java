@@ -40,7 +40,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import uk.org.lidalia.slf4jext.Level;
 import uk.org.lidalia.slf4jext.Logger;
 import uk.org.lidalia.slf4jext.LoggerFactory;
-
+import storage.main.FileStorage;
 /**
  * WebCrawler class in the Runnable class that is executed by each crawler thread.
  *
@@ -56,6 +56,7 @@ public class WebCrawler implements Runnable {
   protected int myId;
   //add this mutex for hashmap
   protected final Object mutex = new Object();
+  protected FileStorage filestorage;
   /**
    * The controller instance that has created this crawler thread. This
    * reference to the controller can be used for getting configurations of the
@@ -112,6 +113,7 @@ public class WebCrawler implements Runnable {
    */
   public void init(int id, CrawlController crawlController) {
     this.myId = id;
+    this.filestorage = new FileStorage (FileStorage.LOCAL_URI);
     this.pageFetcher = crawlController.getPageFetcher();
     this.robotstxtServer = crawlController.getRobotstxtServer();
     this.docIdServer = crawlController.getDocIdServer();
@@ -401,8 +403,8 @@ public class WebCrawler implements Runnable {
             // This is not the first time that this Url is visited. So, we set the depth to a negative number.
             webURL.setDepth((short) -1);
             webURL.setDocid(newdocid);
-        	System.out.printf("Warnig: The duplicate URL is %s\n its anchor text is %s\n", webURL.getURL(),webURL.getAnchor());
-
+        	System.out.printf("Warnig: The duplicate URL is %s\n its anchor text is %s\n its parent URL is %s\n", webURL.getURL(),webURL.getAnchor(),webURL.getParentUrl());
+        	filestorage.appendAnchorText(webURL.getURL(),webURL.getAnchor());
           } else {
             webURL.setDocid(-1);
             webURL.setDepth((short) (curURL.getDepth() + 1));
