@@ -395,6 +395,10 @@ public class WebCrawler implements Runnable {
         ParseData parseData = page.getParseData();
         List<WebURL> toSchedule = new ArrayList<>();
         int maxCrawlDepth = myController.getConfig().getMaxDepthOfCrawling();
+        int pagecount =0;
+        List<String> listURL = new ArrayList<String>();
+        List<String> anchorList = new ArrayList<String>();
+        
         for (WebURL webURL : parseData.getOutgoingUrls()) {
           webURL.setParentDocid(curURL.getDocid());
           webURL.setParentUrl(curURL.getURL());
@@ -404,7 +408,15 @@ public class WebCrawler implements Runnable {
             webURL.setDepth((short) -1);
             webURL.setDocid(newdocid);
         	System.out.printf("Warnig: The duplicate URL is %s\n its anchor text is %s\n its parent URL is %s\n", webURL.getURL(),webURL.getAnchor(),webURL.getParentUrl());
-        	filestorage.appendAnchorText(webURL.getURL(),webURL.getAnchor());
+        	pagecount++;
+        	System.out.printf("duplicate pagecount is %d\n", pagecount);
+        	listURL.add(webURL.getURL());
+        	anchorList.add(webURL.getAnchor());
+        	if((pagecount%100)==0){
+        		filestorage.appendAnchorText(listURL,anchorList);
+        		listURL.clear();
+        		anchorList.clear();
+        	}
           } else {
             webURL.setDocid(-1);
             webURL.setDepth((short) (curURL.getDepth() + 1));
