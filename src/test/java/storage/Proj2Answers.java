@@ -15,16 +15,17 @@ public class Proj2Answers {
 		List<Map.Entry<String,Integer>> tokenFreq;
 		List<Map.Entry<String,Integer>> TGFreq;
 		
-		tokenFreq = ts.getHighestFreq_Token(501);
-		TGFreq = ts.getHighestFreq_3G(20);
+		//tokenFreq = ts.getHighestFreq_Token(501);
+		//TGFreq = ts.getHighestFreq_3G(20);
 		
 		PrintWriter tokenTxt = new PrintWriter("tokenFreq.txt");
 		//PrintWriter TGTxt = new PrintWriter("TGFreq.txt");
-		
+		/*
 		for ( int i=0; i<tokenFreq.size(); i++ ) {
 			System.out.println(tokenFreq.get(i).getKey() + " " + tokenFreq.get(i).getValue());
 			tokenTxt.println( tokenFreq.get(i).getKey() + " " + tokenFreq.get(i).getValue() );
 		}
+		*/
 		/*
 		for ( int i=0; i<TGFreq.size(); i++ ) {
 			System.out.println(TGFreq.get(i).getKey() + " " + TGFreq.get(i).getValue());

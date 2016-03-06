@@ -31,7 +31,7 @@ private static TokenStorage ts;
 	/**
 	 * import some data, couldn't use everytime
 	 */
-	//@Ignore
+	@Ignore
 	@Test
 	public void insertTokenTest() {
 		System.out.println("---Testing insertToken()---");
@@ -70,7 +70,7 @@ private static TokenStorage ts;
 		//what if there no such token? test will FAIL~!
 		System.out.println("---Testing getTokenFreq()---");
 		for ( int i=1; i<=10; i++ ) {
-			System.out.println( "hi" + i + ": " + ts.getTokenFreq("hi" + i) );
+	//		System.out.println( "hi" + i + ": " + ts.getTokenFreq("hi" + i) );
 		}
 		System.out.println("---Complete Testing getTokenFreq()---");
 	}
@@ -113,24 +113,6 @@ private static TokenStorage ts;
 	}
 	*/
 	
-	@Ignore
-	@Test
-	public void get3GFreqTest() {
-		//what if there no such token? test will FAIL~!
-		System.out.println("---Testing get3GFreq()---");
-		for ( int i=1; i<=10; i++ ) {
-			System.out.println( "hi"+i+"hi"+(i+1)+"hi"+(i+2)+": " + ts.get3GFreq( "hi"+i+"hi"+(i+1)+"hi"+(i+2) ) );
-		}
-		System.out.println("---Complete Testing get3GFreq()---");
-	}
-	/*
-	@Ignore
-	@Test
-	public void getHighestFreq_3GTest() {
-		System.out.println("---Testing getHighestFreq_3G()---");
-		System.out.println( ts.getHighestFreq_3G(10) );
-		System.out.println("---Complete Testing getHighestFreq_3G()---");
-	}
-	*/
+	
 
 }

@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
+import org.slf4j.LoggerFactory;
 
 import com.mongodb.Block;
 import com.mongodb.MongoBulkWriteException;
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -18,6 +20,8 @@ import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.UpdateOneModel;
 import com.mongodb.client.model.UpdateOptions;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import data.Pair.Pair;
 
 import static java.util.Arrays.asList;
@@ -45,11 +49,14 @@ public class TokenStorage {
 			"mongodb://127.0.0.1/";
 	public final static String LOCAL_8888_URI = 
 			"mongodb://127.0.0.1:8888/";
+	public final static String JIAN_URI = 
+			"mongodb://70.187.178.194/"+TOKEN_DB_NAME;
 	//private static final TokenStorage instance = null;
 	//private MongoClient client;
 	private MongoDB DB;
 	private MongoDatabase db, dbPages;
 	private MongoCursor<Document> iter;
+	private Logger mongoLogger;
 	
 	/**
 	 * connect to MONGOLAB_URI, ICS_URI or LOCAL_URI
@@ -60,6 +67,9 @@ public class TokenStorage {
 		DB.init(URI, TOKEN_DB_NAME);
 		
 	       // Now connect to your databases
+		mongoLogger = (Logger) LoggerFactory.getLogger( "org.mongodb.driver.cluster" );
+	    mongoLogger.setLevel(Level.WARN);
+	    
 	    db = DB.db;
 	    dbPages = DB.dbPages;
 	    //System.out.println("---MongoDB initialized---");
@@ -119,9 +129,14 @@ public class TokenStorage {
 			   bulkList.add( new UpdateOneModel( new Document( "token", p.get(i).getT() ),
 					   new Document( "$push", new Document( "URLs", 
 							   new Document("URL", URLID)
-							   		.append("position", p.get(i).getE())  
+							   		.append("position", p.get(i).getE())
+							   		.append("TF", 0)	//this is default value, to make update faster
+							   		.append("TFIDF", 0)	//this is default value, to make update faster
+							   		.append("cosine", 0)	//this is default value, to make update faster
+							   		.append("score", 0)	//this is default value, to make update faster
 							   		) 
-							   ), new UpdateOptions().upsert(true)
+							   ).append("$set", new Document( "DF", 0).append("IDF", 0))
+					   , new UpdateOptions().upsert(true)
 					   )	//UpdateOneModel
 				);
 		   }
@@ -136,31 +151,101 @@ public class TokenStorage {
 		   }
 		   return true;
 	   }
+	   
+	   public boolean insertTokenS2( List<Pair> p, String URL, 
+			   String mode ) {
+		   //mode will be "TOKEN_COLL_NAME" or "TGRAM_COLL_NAME"
+		   if ( p.isEmpty() ) return true;	//if no element in list, just return
+		   List bulkList = new ArrayList();
+		   //hash URL to get ID, it is too expensive to save every token with URLs
+		   int URLID = URL.hashCode();
+		   try {
+			   db.getCollection(URLID_COLL_NAME).insertOne( 
+					   new Document("URLID", URLID).append("URL", URL)
+					   );
+		   } catch( Exception e ) {
+			   //e.printStackTrace();
+			   //System.out.println("Warn: URLHash duplicated");
+			   //return false;	//if duplicate or something wrong
+		   }
+		   
+		   for ( int i=0; i<p.size(); i++ ) {
+			   //insertToken( p.get(i).getT(), p.get(i).getE(), URL );
+			   bulkList.add( new InsertOneModel( 
+				   new Document( "token", p.get(i).getT() )
+				   		.append("URL", URLID)
+				   		.append("position", p.get(i).getE())
+				   		.append("TF", 0)	//this is default value, to make update faster
+				   		.append("TFIDF", 0)	//this is default value, to make update faster
+				   		.append("cosine", 0)	//this is default value, to make update faster
+				   		.append("score", 0)	//this is default value, to make update faster
+			   		) 
+				);	//DF IDF could be computed during map reduce
+		   }
+		   BulkWriteOptions opt = new BulkWriteOptions();
+		   try {
+			   db.getCollection(mode).bulkWrite(bulkList, opt.ordered(false));
+		   } catch ( MongoBulkWriteException e ) {
+			   System.out.println(e.getMessage());
+		   } catch ( Exception e ) {
+			   System.out.println(e.getMessage());
+			   return false;
+		   }
+		   return true;
+	   }
 	
-	   public boolean computeTFIDF(String tokenCollName, String pageCollName) {
+	   public boolean computeTFIDF(String tokenCollName, String strToCompute) {
 		   //tokenCollName: for retrieving tokens
 		   //pageCollName: for total document number, in different db
-		   List<Document> iter = db.getCollection(tokenCollName).find().into(new ArrayList<Document>());
-		   long totalDocuments = dbPages.getCollection(pageCollName).count();
+		   //List<Document> iter = db.getCollection(tokenCollName).find().into(new ArrayList<Document>());
+		   FindIterable<Document> iter = db.getCollection(tokenCollName).find(
+				   new Document("token", strToCompute)
+				   ).noCursorTimeout(true);
+		   //long totalDocuments = dbPages.getCollection(pageCollName).count();
+		   long totalDocuments = db.getCollection(URLID_COLL_NAME).count();
 		   int countDoc=1;
 		   List bulkList = new ArrayList();
 		   
 		   for ( Document token : iter ) {
+			   int URLInd = 0;
+			   double TF=0, TFIDF=0;
 			   List<Document> URLs = (List<Document>) token.get("URLs");
 			   if ( URLs != null ) {	//some outdated entry may not have this field
 				   countDoc++;
+				   double IDF = Math.log10( totalDocuments/URLs.size() );
 				   bulkList.add(
 					   new UpdateOneModel(
 						   new Document( "token", token.getString("token") ),
 						   new Document( "$set", 
 							   new Document( "DF", URLs.size() )
-							   .append( "IDF", Math.log10( totalDocuments/URLs.size() ) )
+							   .append( "IDF",  IDF )
 						   )
 						)
 					);
+					for( Document URL: URLs ) {
+						//Don't know if it works, List<Integer>
+					   List<Integer> position = (List<Integer>) URL.get("position");
+					   //title for 1, anchor for 0.5
+					   if ( position.get(0)==-3 ) TF = 1 + Math.log10(1 + position.size()-1);
+					   else if ( position.get(0)==-2 ) TF = 0.5 + Math.log10(1 + position.size()-1);
+					   else TF = 1 + Math.log10(position.size());
+					   TFIDF = TF * IDF;
+					   bulkList.add(
+							new UpdateOneModel(
+									new Document( "token", token.getString("token") ),
+									new Document( "$set", 
+										new Document( "URLs."+URLInd+".TF", TF )
+										.append("URLs."+URLInd+".TFIDF", TFIDF)
+										.append("URLs."+URLInd+".cosine", 0)
+										.append("URLs."+URLInd+".score", TFIDF)	//this will change
+									)
+							)
+						);
+						URLInd++;
+					}
 			   }
 			   //BulkWriteOptions opt = new BulkWriteOptions();
-			   if ( countDoc % 10000 == 0 ) {
+			   if ( countDoc % 10000 == 0 || bulkList.size() > 1000000 ) {
 				   try {
 					   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
 					   System.out.println("Compute " + countDoc + " TFIDFs");
@@ -180,7 +265,55 @@ public class TokenStorage {
 		   }
 		   return true;
 	   }
-	   
+	   /*
+	   public boolean computeTFIDFS2(String tokenCollName) {
+		   //tokenCollName: for retrieving tokens
+		   //pageCollName: for total document number, in different db
+		   //List<Document> iter = db.getCollection(tokenCollName).find().into(new ArrayList<Document>());
+		   FindIterable<Document> iter = db.getCollection(tokenCollName).find().noCursorTimeout(true);
+		   //long totalDocuments = dbPages.getCollection(pageCollName).count();
+		   long totalDocuments = db.getCollection(URLID_COLL_NAME).count();
+		   int countDoc=1;
+		   List bulkList = new ArrayList();
+		   
+		   for ( Document token : iter ) {
+			   int URLInd = 0;
+			   double TF=0, TFIDF=0, cosine=0;
+				   countDoc++;
+				   double IDF = Math.log10( totalDocuments/URLs.size() );
+				   bulkList.add(
+					   new UpdateOneModel(
+						   new Document( "token", token.getString("token") ),
+						   new Document( "$set", 
+							   new Document( "DF", URLs.size() )
+							   .append( "IDF",  IDF )
+						   )
+						)
+					);
+					
+			   }
+			   //BulkWriteOptions opt = new BulkWriteOptions();
+			   if ( countDoc % 10000 == 0 || bulkList.size() > 1000000 ) {
+				   try {
+					   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
+					   System.out.println("Compute " + countDoc + " TFIDFs");
+				   } catch ( Exception e ) {
+					   e.printStackTrace();
+				   }
+				   bulkList.clear();
+				   //countDoc=1;
+			   }
+		   }
+		   if ( !bulkList.isEmpty() ) { 
+			   try {
+				   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
+			   } catch ( Exception e ) {
+				   e.printStackTrace();
+			   }
+		   }
+		   return true;
+	   }
+	   */
 	   
 	/**
     * Insert token into DB. 

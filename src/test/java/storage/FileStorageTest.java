@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class FileStorageTest {
 	
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
-		fs = new FileStorage(FileStorage.JIAN_URI);
+		fs = new FileStorage(FileStorage.MONGOLAB_URI);
 		//fs.reset();
 		//Thread.sleep(1000);
 	}
@@ -39,7 +40,7 @@ public class FileStorageTest {
         assertTrue("Connectivity test complete", true);
     }
     
-	@Ignore
+	//@Ignore
 	@Test
 	public void testInsertPage() {
 		System.out.println("---Testing insertPage()---");
@@ -48,18 +49,24 @@ public class FileStorageTest {
     	}
 		System.out.println("---Testing BULK insertPage()---");
 		List l = new ArrayList();
+		List<String> titleList = new ArrayList<String>();
+		List<String> anchorList = new ArrayList<String>();
+		List metaList = new ArrayList();
 		for ( int i=11; i<=20; i++) {
 	    	l.add( new AbstractMap.SimpleEntry<String, String>("TESTURL"+i, "hi"+i) );
+	    	titleList.add( "title" + i);
+	    	anchorList.add( "anchor" + i);
+	    	metaList.add( new HashMap<String, String>() );
     	}
 		try {
-			//fs.insertURLPage(l);
+			fs.insertURLPage(l, titleList, anchorList, metaList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		System.out.println("---Complete Testing insertPage()---");
 	}
 	
-    //@Ignore
+    @Ignore
     @Test
     public void testGetPage() throws FileNotFoundException
     {
