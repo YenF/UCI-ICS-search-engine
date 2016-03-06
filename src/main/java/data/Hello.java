@@ -21,6 +21,32 @@ public class Hello
 		if(args[1].equals("C")) TextProcessor.print3g(TextProcessor.computeThreeGramFrequencies(list));
 		if(args[1].equals("D")) TextProcessor.printAna(TextProcessor.detecAnagrams(list));
 		*/
+		Stemmer s = new Stemmer();
+		try{
+			FileReader filereader = new FileReader("crista lopes.txt");
+			BufferedReader bufferReader = new BufferedReader(filereader);
+			String tempcont;
+			String teststring = "";
+			while((tempcont=bufferReader.readLine())!=null) teststring += tempcont; 
+			System.out.println("the context is \n"+teststring);
+			/*teststring = teststring.toLowerCase();
+			String[] testarry = teststring.split("[^a-z0-9@]+");
+			for(String tempstr:testarry){ 
+				System.out.println(tempstr);
+				s.add(tempstr.toCharArray(),tempstr.length());
+				s.stem();
+				System.out.println("stemmer is "+s.toString());
+				System.out.println(s.toString().length());
+			}*/
+
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		Porter porter = new Porter();
+		String tempstr1 = porter.stripAffixes("national");
+		System.out.println("result is "+tempstr1);
+		System.out.println("test1 test1");
 		String teststr = "This is a book,Hello";
 	    List<String> list1 = TextProcessor.tokenizeFile(teststr);
 	    //TextProcessor.print(TextProcessor.computeWordFrequencies(list1));

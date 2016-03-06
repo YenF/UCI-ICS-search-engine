@@ -19,17 +19,21 @@ public class TextProcessor {
 	public static List<String> tokenizeFile(String inputstring){
 		List<String> list = new LinkedList<String>();
 			if(inputstring==null) return list;
+			inputstring = inputstring.toLowerCase();
 			//FileReader filereader = new FileReader(filename);
 			//BufferedReader bufferReader = new BufferedReader(filereader);
 			
 			//String nextline;
 			//StringBuilder builder = new StringBuilder();
-			Porter porter = new Porter();
+			//Porter porter = new Porter();
 			
-			String[] strarry = inputstring.split("\\s+|,+|\\.+|[\\r\\n]+");
+			Stemmer s = new Stemmer();
+			String[] strarry = inputstring.split("[^a-z0-9@]+");
 			for(int i=0;i<strarry.length;i++){
 				if(strarry[i].length()>0 && !Stopwords.isStopword(strarry[i])){
-					String tempstr = porter.stripAffixes(strarry[i]);
+					s.add(strarry[i].toCharArray(),strarry[i].length());
+					s.stem();
+					String tempstr = s.toString();
 					//if(tempstr.length()==0) continue;
 					list.add(tempstr);
 				}

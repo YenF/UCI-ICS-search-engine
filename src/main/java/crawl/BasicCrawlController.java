@@ -41,7 +41,8 @@ public class BasicCrawlController {
                 logger.info("\t numberOfCralwers (number of concurrent threads)");
                 return;
             }
-            
+            FileStorage filestorage = new FileStorage (FileStorage.LOCAL_URI);
+            filestorage.reset();
             //FileStorage fs = new FileStorage(FileStorage.MONGOLAB_URI);
             //fs.reset();
             
