@@ -2,6 +2,8 @@ package com.tristan.web.model;
 
 public class Url implements Comparable<Url>{
 	private String url;
+	private String title;
+	private String content;
 	private Integer urlId;
 	private Double score;
 	public Url(String url, Integer urlId, Double score) {
@@ -30,13 +32,25 @@ public class Url implements Comparable<Url>{
 	@Override
 	public int compareTo(Url o) {
 		// TODO Auto-generated method stub
-		if (score == o.getScore()) {
+		if (this.score.doubleValue() == o.getScore().doubleValue()) {
 			return 0;
 		}
-		if (score > o.getScore()) {
+		if (score.doubleValue() > o.getScore().doubleValue()) {
 			return 1;
 		}
 		return -1;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
 	}
 	
 }
