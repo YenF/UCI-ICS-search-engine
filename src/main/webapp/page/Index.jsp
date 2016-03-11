@@ -2,46 +2,57 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<!DOCTYPE html>
-<html>
-<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]>&lt;!&ndash;> <html lang="en"> &lt;!&ndash;<![endif]-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Search ICS</title>
-  <link rel="stylesheet" href="css/style.css">
-  <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1,user-scalable=no"/>
+<title>${!empty key? key:"" }</title>
+<link href="css/css.css" rel="stylesheet"/> 
 </head>
-
-<!-- <body background="about-history-overview.jpg";> -->
 <body>
-    <div style="width: 100%; height:500px">
-        <center>
-  <section class="container">
-    <form class="search" method="post" action="/search">
-        <input type="search" name="key" placeholder="Search ICS..." autocomplete="off" value="${key }">
-        <a href=""><button type="submit">Search</button></a>
-      </form>
-  </section>
-        </center>
-        <center>
-        <c:forEach items="${data }" var="d">
-        <li><a href="${d.url }">${d.url }</a>--${d.score }</li>
-        </c:forEach>
-        </center>
-        <div style="height: 360px"></div>
-  <section class="about">
-    <p class="about-links">
-      <a href="http://www.cssflow.com/snippets/search-dropdown" target="_parent">Team</a>
-      <a href="https://github.uci.edu/yenfengc/CS221_Proj" target="_parent">Source Code</a>
-    </p>
-    <p class="about-author">
-      Supported by  <br>Yen Feng Cheng & Chien-Lin Chen <br>Yuanfan Zhang
-    </p>
-  </section>
-    </div>
+  <table id="container">
+    <tr id="header">
+	 <td colspan="2">
+	    <table class="top">
+		 <tr class="menu">
+		   <td>
+		     <table class="nav">
+			  <tr>
+			   <c:forEach items="${menuList}" var="menu">
+			     <td><h3><a href="${ctx }/${menu.url }.html" title="${menu.cname }" target="_self">${menu.cname }</a></h3></td>
+			   </c:forEach>
+			  </tr>
+			 </table>
+		   </td>
+		 </tr>
+		 <tr><td>
+<form action="/search">
+   <span class="search"><input type="text" class="word" name="key" placeholder="Search ICS..." value="${key }"/></span>
+   <span><input class="searchBtn" type="submit" value="Search"/></span>
+</form>
+		</td></tr>
+		</table>
+	 </td>
+	</tr>
+	<tr id="content">
+	 <td id="left">
+	   <c:forEach items="${data}" var="d">
+	   <table class="item">
+			 <tr>
+			  <td class="td_title" colspan="2">
+			  <h1 class="h1class"><a href="${d.url }">${d.title }</a></h1></td>
+			 </tr>
+			 <tr><td class="itemSummary">${d.content }</td></tr>
+			 <tr class="spread"><td height="25px"><div class="official"><span>Website: <a href="${d.url }">${d.url }</a> </span>&nbsp;</div></td></tr>
+	   </table>
+	   </c:forEach>
+	   <div class="clear"></div>
+	 </td>
+	 <td id="right">
+</td>
+	</tr>
+  </table>
 </body>
 </html>
