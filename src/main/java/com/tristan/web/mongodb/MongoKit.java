@@ -31,6 +31,9 @@ public class MongoKit {
         MongoKit.defaultDb = client.getDB(database);
 
     }
+    public static void setDb(String database) {
+    	MongoKit.defaultDb = client.getDB(database);
+    }
 
 
     public static void updateFirst(String collectionName, MongoQuery q, MongoQuery o) {

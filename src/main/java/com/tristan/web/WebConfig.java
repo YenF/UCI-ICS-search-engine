@@ -33,6 +33,7 @@ public class WebConfig extends JFinalConfig{
 		String host = getProperty("mongodb.host","127.0.1");
 		int port = getPropertyToInt("mongodb.port", 27017);
 		String db = getProperty("mongodb.db","test");
+		String db2 = getProperty("mongodb.db2","test");
 		MongoPlugin mongo = new MongoPlugin(host,port,db);
 		me.add(mongo);
 	}
