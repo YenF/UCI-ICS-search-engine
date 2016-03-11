@@ -139,27 +139,30 @@ public class FileStorage {
    }
    
    /**
-	* Return HashMap type of ( [URL, text, title, anchor] , [metaTags] ). Call it multiple times until it returns null;
+	* Return HashMap type of ( [URL, text, title] , [anchorList] ). Call it multiple times until it returns null;
 	* If return null, means no more element.
 	* @return Map.Entry 
 	*/
-   public Map.Entry< List<String>, List< Map<String,String> > > getNextPage() {
-	   HashMap<List<String>, List< Map<String,String> > > tmp = null;
+   public Map.Entry< List<String>, List<String> > getNextPage() {
+	   HashMap<List<String>, List<String> > tmp = null;
 	   if ( !iter.hasNext() ) return null;
 	   Document tmpDoc = iter.next();
 	   List<String> tmpList = new ArrayList<String>();
-	   List< Map<String,String> > tmpMeta = new ArrayList<Map<String,String>>();
+	   //List< Map<String,String> > tmpMeta = new ArrayList<Map<String,String>>();
+	   List<String> tmpAnchors = (List<String>) tmpDoc.get("anchor"); 
+	   
 	   tmpList.add(tmpDoc.getString("URL"));
 	   tmpList.add(tmpDoc.getString("content"));
 	   tmpList.add(tmpDoc.getString("title"));
-	   tmpList.add(tmpDoc.getString("anchor"));
+	   //tmpList.add(tmpDoc.getString("anchor"));
+	   
 	   
 	   //tmpMeta.add( (Map<String, String>) ( (Document)tmpDoc.get("metaTags") ).get );
 	   
-	   tmp = new HashMap<List<String>, List< Map<String,String> > >();
+	   tmp = new HashMap<List<String>, List<String> >();
 	   //tmp.put( tmpDoc.getString("URL"), tmpDoc.getString("content") );
-	   tmp.put( tmpList, tmpMeta );
-	   Map.Entry<List<String>, List< Map<String,String> > > ret = tmp.entrySet().iterator().next();
+	   tmp.put( tmpList, tmpAnchors );
+	   Map.Entry<List<String>, List<String> > ret = tmp.entrySet().iterator().next();
 	   return ret;
    }
    

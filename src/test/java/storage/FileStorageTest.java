@@ -26,7 +26,7 @@ public class FileStorageTest {
 	
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
-		fs = new FileStorage(FileStorage.MONGOLAB_URI);
+		fs = new FileStorage(FileStorage.JIAN_URI);
 		//fs.reset();
 		//Thread.sleep(1000);
 	}
@@ -40,7 +40,7 @@ public class FileStorageTest {
         assertTrue("Connectivity test complete", true);
     }
     
-	//@Ignore
+	@Ignore
 	@Test
 	public void testInsertPage() {
 		System.out.println("---Testing insertPage()---");
@@ -66,7 +66,7 @@ public class FileStorageTest {
 		System.out.println("---Complete Testing insertPage()---");
 	}
 	
-    @Ignore
+    //@Ignore
     @Test
     public void testGetPage() throws FileNotFoundException
     {
@@ -75,14 +75,19 @@ public class FileStorageTest {
     	Set<Integer> s = new HashSet<Integer>();
     	System.out.println("---testing getPage---");
     	fs.resetPagesIterator();
-    	Map.Entry<List<String>, List< Map<String,String> > > page = fs.getNextPage();
+    	Map.Entry<List<String>, List<String> > page = fs.getNextPage();
     	System.out.println("---printing out page URL---");
-    	while ( page!=null && totalPages<91000 ) {
+    	while ( page!=null && totalPages<500 ) {
     		totalPages++;
     		//writer.println(page.getKey().get(0));
     		//writer.println(page.getValue());
     		//writer.println("*******");
-    		
+    		System.out.println("\n"+page.getKey().get(0));
+    		System.out.println("---Printing out anchor texts---");
+    		for ( String anchor : page.getValue()) {
+    			System.out.println(anchor);
+    		}
+    		/*
     		if ( !s.add(page.getKey().get(0).hashCode()) ){
     			System.out.println("Duplicate!!");
     		}
