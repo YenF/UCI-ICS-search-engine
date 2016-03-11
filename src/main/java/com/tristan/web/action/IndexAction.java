@@ -9,6 +9,8 @@ import java.util.TreeMap;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.Prop;
+import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -16,8 +18,11 @@ import com.mongodb.DBObject;
 import com.tristan.web.model.Url;
 import com.tristan.web.mongodb.MongoKit;
 import com.tristan.web.mongodb.MongoQuery;
+import com.tristan.web.util.HtmlKit;
 
 public class IndexAction extends Controller{
+	private String db = PropKit.use("config.properties").get("mongodb.db");
+	private String db2 = PropKit.use("config.properties").get("mongodb.db2");
 	@ActionKey("/")
 	public void index() {
 		render("Index.jsp");
@@ -35,20 +40,37 @@ public class IndexAction extends Controller{
 		for (String k : keys) {
 			query.like("token",k);
 		}
+		MongoKit.setDb(db);
 		List<DBObject> dbObjects = MongoKit.findByQuery("tokens", query, 10);
-		List<Url> datas = proccess(dbObjects);
+		List<Url> datas = process(dbObjects);
 		for (Url  url : datas) {
 			List<DBObject> urls = MongoKit.findByQuery("URLID", new MongoQuery().set("URLID", url.getUrlId()), 1);
 			DBObject _url = urls.get(0);
 			String uv = (String)_url.get("URL");
 			url.setUrl(uv);
 		}
+		MongoKit.setDb(db2);
+		for (Url  url : datas) {
+			List<DBObject> urls = MongoKit.findByQuery("URL_Pages", new MongoQuery().set("URL", url.getUrl()), 1);
+			DBObject _url = urls.get(0);
+			if (_url == null) {
+				continue;
+			}
+			String title = (String)_url.get("title");
+			url.setTitle(title);
+			String content = (String)_url.get("content");
+			content = HtmlKit.trimHtmlTag(content);
+			if (content != null && content.length() > 250) {
+				content = content.substring(0, 200);
+			}
+			url.setContent(content);
+		}
         setAttr("data", datas);
         keepPara();
 		render("Index.jsp");
 	}
 	
-	private List<Url> proccess(List<DBObject> results) {
+	private List<Url> process(List<DBObject> results) {
 		Map<Integer, Double> datas = new TreeMap<>();
 		for (DBObject dbObject : results) {
 			BasicDBList list = (BasicDBList)dbObject.get("URLs");
@@ -73,6 +95,6 @@ public class IndexAction extends Controller{
 		}
 		Collections.sort(result);
 		Collections.reverse(result);;
-		return result.subList(0, 5);
+		return result.subList(0, 10);
 	}
 }
