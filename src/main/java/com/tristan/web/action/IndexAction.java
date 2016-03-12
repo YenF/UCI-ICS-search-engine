@@ -3,6 +3,8 @@ package com.tristan.web.action;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -88,20 +90,52 @@ public class IndexAction extends Controller{
 	
 	private List<Url> process(List<DBObject> results) {
 		Map<Integer, Double> datas = new TreeMap<>();
+		Map<String, Double> query = new HashMap<>();
+		Map<Integer, HashMap<String, Double>> docs = new HashMap<Integer, HashMap<String, Double>>();
+		//tokens
+		for (DBObject dbObject : results) {
+			//compute query vector
+			Double IDF = Double.valueOf(dbObject.get("IDF").toString());
+			query.put(dbObject.get("token").toString(), IDF);
+		}
+		
+		//token
 		for (DBObject dbObject : results) {
 			BasicDBList list = (BasicDBList)dbObject.get("URLs");
+			//URL list
 			for (Object object : list) {
 				DBObject object2 = (DBObject)object;
 				Integer uriId = (Integer)object2.get("URL");
 				Double score = Double.valueOf(object2.get("TFIDF").toString());
-				Double o = datas.get(uriId);
-				if (o == null) {
-					datas.put(uriId, score);
-				}else {
-					datas.put(uriId, score + o);
+				
+				//Double o = datas.get(uriId);
+				//if (o == null) {
+				//	datas.put(uriId, score);
+				//}else {
+				//	datas.put(uriId, score + o);
+				//}
+				
+				HashMap<String, Double> tmp = docs.get(uriId);
+				if ( tmp == null ) {	//還沒有在裡面
+					tmp = new HashMap<String, Double>();
+					tmp.put(dbObject.get("token").toString(), score);
+					docs.put(uriId, tmp);
+				} else {	//有在裡面，把tmp拿出來再insert
+					tmp.put(dbObject.get("token").toString(), score);
+					docs.put(uriId, tmp);
 				}
 			}
+			Iterator it = docs.entrySet().iterator();
+			while ( it.hasNext() ) {	//datas
+				Map.Entry pair = (Map.Entry) it.next();
+				//put cos similarity to uriID
+				datas.put((Integer)pair.getKey(), CosineSimilarity.calculateCosineSimilarity( (HashMap<String, Double>)query, 
+						(HashMap<String, Double>)pair.getValue()) );
+			}
 		}
+		
+		
+		
 		List<Url> result = new ArrayList<>();
 		for (Map.Entry<Integer,Double> entry : datas.entrySet()) {
 			Integer _key = entry.getKey();
