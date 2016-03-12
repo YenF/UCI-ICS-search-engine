@@ -198,9 +198,14 @@ public class TokenStorage {
 		   //tokenCollName: for retrieving tokens
 		   //pageCollName: for total document number, in different db
 		   //List<Document> iter = db.getCollection(tokenCollName).find().into(new ArrayList<Document>());
-		   FindIterable<Document> iter = db.getCollection(tokenCollName).find(
+		   FindIterable<Document> iter;
+		   if ( strToCompute.equals("") ) { 
+			   iter = db.getCollection(tokenCollName).find().noCursorTimeout(true);
+		   } else {
+			   iter = db.getCollection(tokenCollName).find(
 				   new Document("token", strToCompute)
 				   ).noCursorTimeout(true);
+		   }
 		   //long totalDocuments = dbPages.getCollection(pageCollName).count();
 		   long totalDocuments = db.getCollection(URLID_COLL_NAME).count();
 		   int countDoc=1;
@@ -226,8 +231,8 @@ public class TokenStorage {
 						//Don't know if it works, List<Integer>
 					   List<Integer> position = (List<Integer>) URL.get("position");
 					   //title for 1, anchor for 0.5
-					   if ( position.get(0)==-3 ) TF = 1 + Math.log10(1 + position.size()-1);
-					   else if ( position.get(0)==-2 ) TF = 0.5 + Math.log10(1 + position.size()-1);
+					   if ( position.get(0)==-3 ) TF = 1 + Math.log10(20 + position.size()-1);
+					   else if ( position.get(0)==-2 ) TF = 1 + Math.log10(10 + position.size()-1);
 					   else TF = 1 + Math.log10(position.size());
 					   TFIDF = TF * IDF;
 					   bulkList.add(
@@ -245,7 +250,7 @@ public class TokenStorage {
 					}
 			   }
 			   //BulkWriteOptions opt = new BulkWriteOptions();
-			   if ( countDoc % 10000 == 0 || bulkList.size() > 1000000 ) {
+			   if ( countDoc % 10000 == 0 || bulkList.size() > 500000 ) {
 				   try {
 					   db.getCollection(tokenCollName).bulkWrite(bulkList, new BulkWriteOptions().ordered(false));
 					   System.out.println("Compute " + countDoc + " TFIDFs");

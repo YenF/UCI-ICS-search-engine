@@ -8,6 +8,6 @@ public class testAppendAnchor {
 	
 	public static void main(String[] args) {
 		fs = new FileStorage(FileStorage.ICS_NOAUTH_URI);
-		fs.appendAnchorText("LALALA", "HAHAHA");
+		//fs.appendAnchorText("LALALA", "HAHAHA");
 	}
 }

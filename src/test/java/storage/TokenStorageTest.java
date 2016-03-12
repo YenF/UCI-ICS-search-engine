@@ -24,7 +24,7 @@ private static TokenStorage ts;
 	@BeforeClass
 	public static void setupDB() throws InterruptedException {
 		ts = new TokenStorage(TokenStorage.ICS_URI);
-		ts.reset();
+		//ts.reset();
 		//Thread.sleep(1000);
 	}
 	
