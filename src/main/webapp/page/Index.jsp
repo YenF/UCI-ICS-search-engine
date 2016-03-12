@@ -46,6 +46,7 @@
 			 </tr>
 			 <tr><td class="itemSummary">${d.content }</td></tr>
 			 <tr class="spread"><td height="25px"><div class="official"><span>Website: <a href="${d.url }">${d.url }</a> </span>&nbsp;</div></td></tr>
+		   <tr class="spread"><td height="25px"><div class="official"><span>Score: ${d.score} </span>&nbsp;</div></td></tr>
 	   </table>
 	   </c:forEach>
 	   <div class="clear"></div>
