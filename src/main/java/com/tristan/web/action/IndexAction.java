@@ -29,15 +29,27 @@ public class IndexAction extends Controller{
 	}
 	@ActionKey("/search")
 	public void search() {
+		List<String> keywords = new LinkedList<String>();
 		String key = getPara("key");
 		if (StrKit.isBlank(key)) {
-			render("Index.jsp");return;
+			render("Index.jsp");
+			return;
 		}
-		String[] keys = key.split(" ");
+		Stemmer s = new Stemmer();
+		String[] keys = key.split("[^a-z0-9@]+");
+		for(int i=0; i < keys.length; i++){
+			if(keys[i].length()>0 && !Stopwords.isStopword(keys[i])){
+				s.add(keys[i].toCharArray(),keys[i].length());
+				s.stem();
+				String tempstr = s.toString();
+				//if(tempstr.length()==0) continue;
+				keywords.add(tempstr);
+			}
+		}
 //		String reduce = "function(doc, aggr){" + "aggr.count += 1;" + "        }";
 		
 		MongoQuery query = new MongoQuery();
-		for (String k : keys) {
+		for (String k : keywords) {
 			query.like("token",k);
 		}
 		MongoKit.setDb(db);
@@ -77,7 +89,7 @@ public class IndexAction extends Controller{
 			for (Object object : list) {
 				DBObject object2 = (DBObject)object;
 				Integer uriId = (Integer)object2.get("URL");
-				Double score = (Double)object2.get("TFIDF");
+				Double score = Double.valueOf(object2.get("TFIDF").toString());
 				Double o = datas.get(uriId);
 				if (o == null) {
 					datas.put(uriId, score);
@@ -94,7 +106,10 @@ public class IndexAction extends Controller{
 			result.add(url);
 		}
 		Collections.sort(result);
-		Collections.reverse(result);;
-		return result.subList(0, 10);
+		Collections.reverse(result);
+		if(result.size() >= 10){
+			return result.subList(0, 10);
+		}
+		return result;
 	}
 }
