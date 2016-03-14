@@ -230,10 +230,39 @@ public class TokenStorage {
 					for( Document URL: URLs ) {
 						//Don't know if it works, List<Integer>
 					   List<Integer> position = (List<Integer>) URL.get("position");
+					   FindIterable<Document> rawURLIt = 
+							   db.getCollection(URLID_COLL_NAME).find( new Document("URLID",URL.getInteger("URL")));
+					   int tokenNum=1;
+					   if ( rawURLIt.first()==null ) {
+						   System.out.println("Problem occurs: can't find " + URL.getInteger("URL") + " in URLID.");
+					   } else {
+						   String rawURL = rawURLIt.first().getString("URL");
+						   rawURLIt = dbPages.getCollection(PAGE_COLL_NAME).find( new Document("URL", rawURL));
+						   if ( rawURLIt.first()==null ) {
+							   System.out.println("Problem occurs: can't find " + rawURL + " in URL.");
+						   } else {
+							   System.out.println("Now counting token of " + rawURL);
+							   if ( rawURLIt.first().getString("content")!=null ) {
+								   tokenNum = rawURLIt.first().getString("content").split("[^a-z0-9@]+").length;
+							   } else {
+								   System.out.println("Problem occurs: can't find content in " + rawURL);
+							   }
+							   if ( rawURLIt.first().get("anchor")!=null ) {
+								   List<String> strList = (List<String>)rawURLIt.first().get("anchor");
+								   for ( String str : strList) {
+									   if ( str!=null ) {
+										   tokenNum += str.split("[^a-z0-9@]+").length;
+									   }
+								   }
+							   } else {
+								   System.out.println("Problem occurs: can't find anchor in " + rawURL);
+							   }
+						   }
+					   }
 					   //title for 1, anchor for 0.5
-					   if ( position.get(0)==-3 ) TF = 1 + Math.log10(20 + position.size()-1);
-					   else if ( position.get(0)==-2 ) TF = 1 + Math.log10(10 + position.size()-1);
-					   else TF = 1 + Math.log10(position.size());
+					   if ( position.get(0)==-3 ) TF = 0.5 + 0.5 * (tokenNum * 10 + position.size()-1) / tokenNum;
+					   else if ( position.get(0)==-2 ) TF = 0.5 + 0.5 * (tokenNum * 5 + position.size()-1) / tokenNum;
+					   else TF = 0.5 + 0.5 * position.size() / tokenNum;
 					   TFIDF = TF * IDF;
 					   bulkList.add(
 							new UpdateOneModel(

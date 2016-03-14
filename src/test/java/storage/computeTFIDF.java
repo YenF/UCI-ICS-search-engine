@@ -9,7 +9,7 @@ import storage.main.TokenStorage;
 public class computeTFIDF {
 	public static void main(String[] args) throws Exception {
 		TokenStorage ts;
-		/*
+		
 		ts = new TokenStorage(TokenStorage.JIAN_URI);
 		String toks[] = { "mondego", "machin", "learn", "softwar", "engin", "secur",
 				"student", "affair", "graduat", "cours", "crista", "lope", "rest", "comput",
@@ -17,8 +17,9 @@ public class computeTFIDF {
 		for ( String str : toks) {
 			ts.computeTFIDF(ts.TOKEN_COLL_NAME, str);
 		}
-		*/
+		return;
 		
+		/*
 		if ( args.length==0 ){
 			System.out.println("Argument 1: LOCAL, ICS, ICS_NOAUTH, JIAN");
 			System.out.println("Argument 2: TOKEN, 3G");
@@ -44,5 +45,6 @@ public class computeTFIDF {
 		}else if ( args[1].equals("3G") ) {
 			ts.computeTFIDF(ts.TGRAM_COLL_NAME, "");
 		}
+		*/
 	}
 }
